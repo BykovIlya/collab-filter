@@ -8,7 +8,7 @@
                     </b-col>
                     <b-col sm="7">
                         <div class ="float-right">
-                            <b-btn  variant="info" @click="showModalExport">export from .csv</b-btn>
+                            <b-btn  variant="info" @click="showModalImport">import from .csv</b-btn>
                         </div>
                     </b-col>
                 </b-row>
@@ -31,6 +31,7 @@
             </b-row>
         </b-card>
     </b-container>
+
 </template>
 
 <script>
@@ -54,6 +55,27 @@
                 totalRows:0,
                 sortBy: null,
                 sortDesc: false,
+            }
+        },
+        methods: {
+            importProducts() {
+                let formData = new FormData();
+                formData.append('file', this.fileProducts);
+                let url = this.formUrl + "/import";
+                this.$http.post(url, formData, null).then(result => {
+                    console.log(result);
+                    if (result.status === 200) {
+                        this.$refs.table.refresh();
+                    }
+                }, error => {
+                    console.log(error);
+                });
+            },
+            showModalImport() {
+                this.$refs.modalImport.show()
+            },
+            hideModalImport() {
+                this.$refs.modalImport.hide()
             }
         }
     }

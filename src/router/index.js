@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import hello from '@/components/HelloWorld'
 import Products from '@/components/Products'
 import Users from '@/components/Users'
 import Recommendations from '@/components/Recommendations'
+import Tests from '@/components/Tests'
 
 Vue.use(Router)
 
@@ -11,7 +12,7 @@ const routes = [
     {
       name: 'Index',
       path: '/',
-      component: HelloWorld,
+      component: Users,
     },
     {
       name: 'Users',
@@ -27,6 +28,11 @@ const routes = [
       name: 'Recommendations',
       path: '/recommendations',
       component: Recommendations,
+    },
+    {
+      name: 'Tests',
+      path: '/tests',
+      component: Tests,
     }
     ];
 

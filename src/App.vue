@@ -7,6 +7,7 @@
           <b-nav-item :to = "{ name: 'Users'}">Users</b-nav-item>
           <b-nav-item :to = "{ name: 'Products'}">Products</b-nav-item>
           <b-nav-item :to = "{ name: 'Recommendations'}">Personal recommendations</b-nav-item>
+          <b-nav-item :to = "{ name: 'Tests'}">Tests</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
