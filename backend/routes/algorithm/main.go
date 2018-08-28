@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"bufio"
 	"strconv"
+
 )
 
-func main1() {
+func main() {
 	/* reading from file */
 	events := readingTransactionsFromFile()
 
@@ -202,7 +203,7 @@ func main1() {
 		}*/
 }
 
-func main()  {
+func main1()  {
 	//test1CF()
 	//test2CF()	products := make( []string, 0)
 	//	for i := 0; i < 100; i++ {

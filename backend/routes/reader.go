@@ -1,4 +1,4 @@
-package main
+package routes
 
 import (
 	"math"
@@ -9,43 +9,51 @@ import (
 	"io"
 	"log"
 	"sort"
+  "fmt"
 )
 
 /**
 	the struct of events
  */
 type Events struct {
-	//	timestamp string /*int64*/
-	visitorid string /*int64*/
-	//	event_ string /*object*/
-	itemid string /*int64*/
-	//	transactionid string /*float64*/
-
+		Timestamp string /*int64*/ `json:"timestamp"`
+	  Visitorid string /*int64*/  `json:"visitorid"`
+		Event_ string /*object*/ `json:"event"`
+	  Itemid string /*int64*/  `json:"itemid"`
+		Transactionid string /*float64*/ `json:"transactionid"`
 }
 
 /**
 	the struct of items
  */
 type Items struct{
-	itemid_string string
-	itemid_count float64
+	Itemid_string string  `json:"itemid_string"`
+	Itemid_count float64  `json:"itemid_count"`
 }
 
+type ItemsGlobal struct {
+  Itemid string `json:"itemid"`
+  Count int64 `json:"count"`
+}
 /**
 	the struct of visitors
  */
 type Visitor struct {
-	visitorid_string string
-	items [] Items
+	Visitorid_string string `json:"visitorid_string"`
+	Items [] Items          `json:"items"`
 }
 
 /**
 	reading data from .csv
  */
-func readingTransactionsFromFile() []*Events {
-	csvFile, _ := os.Open("events.csv")
+func readingTransactionsFromFile(csvFileName string) []Events {
+	csvFile, err := os.Open(csvFileName)
+  if err != nil {
+    //error
+  }
+  fmt.Println("success open file!")
 	reader := csv.NewReader(bufio.NewReader(csvFile))
-	var events []*Events
+	var events []Events
 	for {
 		line, error := reader.Read()
 		if error == io.EOF {
@@ -53,34 +61,44 @@ func readingTransactionsFromFile() []*Events {
 		} else if error != nil {
 			log.Fatal(error)
 		}
-		if line[2] == "transaction" {
-			events = append(events, &Events{
-				//	timestamp:     line[0],
-				visitorid:     line[1],
-				//	event_ :       line[2],
-				itemid:        line[3],
-				//	transactionid: line[4],
-			})
-		}
+		//if line[2] == "transaction" {
+		var event = Events{}
+    event.Timestamp = line[0]
+		event.Visitorid = line[1]
+    event.Event_ = line[2]
+    event.Itemid = line[3]
+    event.Transactionid = line[4]
+
+    events = append(events, event)
+
+			//events = append(events, &Events{
+			//  timestamp:     line[0],
+			//	visitorid:     line[1],
+			//	event_ :       line[2],
+			//	itemid:        line[3],
+			//	transactionid: line[4],
+			//})
+	//	}
 
 	}
+
 	return events
 }
 
-func makeUniqArrayOfVisitors(events []*Events) []string {
+func makeUniqArrayOfVisitors(events []Events) []string {
 	bufOfVisitors := make ([] string, len(events))
 	for i := 0; i < len(events); i++ {
-		bufOfVisitors[i] = events[i].visitorid
+		bufOfVisitors[i] = events[i].Visitorid
 	}
 	sort.Strings(bufOfVisitors)
 	removeDublicatesOfVisitors := removeDuplicates(bufOfVisitors)
 	return removeDublicatesOfVisitors
 }
 
-func makeUniqArrayOfItems(events []*Events) [] string {
+func makeUniqArrayOfItems(events []Events) [] string {
 	bufOfItems := make ([] string, len(events))
 	for i := 0; i < len(events); i++ {
-		bufOfItems[i] = events[i].itemid
+		bufOfItems[i] = events[i].Itemid
 	}
 	sort.Strings(bufOfItems)
 	removeDublicatesOfItems := removeDuplicates(bufOfItems)
@@ -99,9 +117,9 @@ func makeMatrixOfSales (visitors [] Visitor, removeDublicatesOfVisitors [] strin
 	make matrix
 	 */
 	for i := 0; i < len(removeDublicatesOfVisitors); i++ {
-		for j := 0; j < len(visitors[i].items); j++ {
+		for j := 0; j < len(visitors[i].Items); j++ {
 			//if visitors[i].items[j].itemid_count > 0 {
-			matrixOfSales[i][getIndItem(removeDublicatesOfItems,visitors[i].items[j].itemid_string)] = visitors[i].items[j].itemid_count;
+			matrixOfSales[i][getIndItem(removeDublicatesOfItems,visitors[i].Items[j].Itemid_string)] = visitors[i].Items[j].Itemid_count;
 			//}
 		}
 	}
@@ -115,10 +133,10 @@ func makeArrayOfSales (matrixOfSales [][] float64, n int, m int) [] float64 {
 }
 func addCountToEachProductOfEachVisitor (visitors [] Visitor) {
 	for i := 0; i < len(visitors); i++  {
-		sort.Slice(visitors[i].items, func(j, k int) bool { return visitors[i].items[j].itemid_string < visitors[i].items[k].itemid_string })
+		sort.Slice(visitors[i].Items, func(j, k int) bool { return visitors[i].Items[j].Itemid_string < visitors[i].Items[k].Itemid_string })
 	}
 	for i := 0; i < len(visitors); i++ {
-		visitors[i].items = findCount(visitors[i].items)
+		visitors[i].Items = findCount(visitors[i].Items)
 	}
 }
 /**
@@ -126,7 +144,7 @@ func addCountToEachProductOfEachVisitor (visitors [] Visitor) {
  */
 func getIndVisitor (visitor [] Visitor, finder string) int {
 	for i := 0; i < len(visitor); i++ {
-		if visitor[i].visitorid_string == finder {
+		if visitor[i].Visitorid_string == finder {
 			return i
 		}
 	}
@@ -150,20 +168,20 @@ func getIndItem (items [] string, finder string) int {
  */
 func initVisitors (visitor [] Visitor, buffer [] string) {
 	for i := 0; i < len(buffer); i++ {
-		visitor[i].visitorid_string =  buffer[i]
+		visitor[i].Visitorid_string =  buffer[i]
 	}
 }
 
 /**
 	set each visitor an array of items
  */
-func addItemsToVisitor (visitor [] Visitor, events []*Events){
+func addItemsToVisitor (visitor [] Visitor, events []Events){
 	for i := 0; i < len(visitor); i++ {
 		for j := 0; j < len(events); j++ {
-			if visitor[i].visitorid_string == events[j].visitorid {
-				visitor[i].items = append(visitor[i].items, Items{
-					itemid_string: events[j].itemid,
-					itemid_count: 1,
+			if visitor[i].Visitorid_string == events[j].Visitorid {
+				visitor[i].Items = append(visitor[i].Items, Items{
+					Itemid_string: events[j].Itemid,
+					Itemid_count: 1,
 				})
 			}
 		}
@@ -246,15 +264,15 @@ func findCount (item []Items) [] Items{
 	buffer := make( [] Items, 0);
 	var prev string
 	for i := 0; i < len(item); i++ {
-		if (item[i].itemid_string != prev) {
+		if (item[i].Itemid_string != prev) {
 			buffer = append(buffer, Items {
-				item[i].itemid_string,
+				item[i].Itemid_string,
 				1,
 			})
 		} else {
-			buffer[len(buffer) - 1].itemid_count++
+			buffer[len(buffer) - 1].Itemid_count++
 		}
-		prev = item[i].itemid_string
+		prev = item[i].Itemid_string
 	}
 	return buffer
 }
