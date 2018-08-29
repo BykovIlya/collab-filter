@@ -19,8 +19,9 @@ func main() {
 	router.GET("/events",routes.GetEvents)
   router.GET("/users", routes.GetUsers)
 	router.GET("/products", routes.GetProducts)
+  router.GET("/recommendations", routes.GetRecommends)
+	router.POST("/recommendations/personal", routes.GetPerson)
   router.Run(":5000")
-
 }
 
 func CreateDirsForFiles() {

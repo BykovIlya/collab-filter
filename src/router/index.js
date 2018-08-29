@@ -4,7 +4,6 @@ import Home from '@/components/Home'
 import Products from '@/components/Products'
 import Users from '@/components/Users'
 import Recommendations from '@/components/Recommendations'
-import Tests from '@/components/Tests'
 
 Vue.use(Router)
 
@@ -29,11 +28,6 @@ const routes = [
       path: '/recommendations',
       component: Recommendations,
     },
-    {
-      name: 'Tests',
-      path: '/tests',
-      component: Tests,
-    }
     ];
 
 const router = new Router({routes,mode:'history'});
