@@ -5,9 +5,9 @@
         <template slot="header">
           <b-row>
             <b-col sm="5">
-              <h4 class="card-title">Recommendations</h4>
+              <h4 class="card-title">Recommendations for user {{nameOfRecommendation}}</h4>
             </b-col>
-            <div class ="float-right">
+            <div class ="float-left">
               <b-btn v-b-modal.modalPrevent>Enter the user</b-btn>
             </div>
           </b-row>
@@ -76,17 +76,16 @@
       },
       handleSubmit () {
         let myVisitor = new String(this.nameOfRecommendation)
-        let url = "http://localhost:5000/recommendations/personal"
-        this.$http.post(url, myVisitor, null).then(result => {
-          console.log(result);
-          if (result.status === 200) {
-            this.$refs.table.refresh();
-          }
-        },error =>{
-          console.log(error);
-        });
-        this.clearName()
-        this.$refs.modal.hide()
+        let url = "http://localhost:5000/recommendations/"+myVisitor;
+        this.$http.get(url).then(result => {
+            console.log(result);
+            this.clearName()
+            this.$refs.modal.hide()
+            //window.location = "http://localhost:5000/recommendations"
+        })
+
+        //this.$http.post(url, myVisitor, null)
+
       },
       getItems(ctx){
         let url = "http://localhost:5000/recommendations";

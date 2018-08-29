@@ -20,7 +20,7 @@ func main() {
   router.GET("/users", routes.GetUsers)
 	router.GET("/products", routes.GetProducts)
   router.GET("/recommendations", routes.GetRecommends)
-	router.POST("/recommendations/personal", routes.GetPerson)
+	router.GET("/recommendations/:id", routes.GetPerson)
   router.Run(":5000")
 }
 

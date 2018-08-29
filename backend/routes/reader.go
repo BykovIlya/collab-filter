@@ -61,16 +61,16 @@ func readingTransactionsFromFile(csvFileName string) []Events {
 		} else if error != nil {
 			log.Fatal(error)
 		}
-		//if line[2] == "transaction" {
-		var event = Events{}
-    event.Timestamp = line[0]
-		event.Visitorid = line[1]
-    event.Event_ = line[2]
-    event.Itemid = line[3]
-    event.Transactionid = line[4]
+		if line[2] == "transaction" {
+      var event= Events{}
+      event.Timestamp = line[0]
+      event.Visitorid = line[1]
+      event.Event_ = line[2]
+      event.Itemid = line[3]
+      event.Transactionid = line[4]
 
-    events = append(events, event)
-
+      events = append(events, event)
+    }
 			//events = append(events, &Events{
 			//  timestamp:     line[0],
 			//	visitorid:     line[1],
