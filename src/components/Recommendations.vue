@@ -5,7 +5,7 @@
         <template slot="header">
           <b-row>
             <b-col sm="5">
-              <h4 class="card-title">Recommendations for user {{nameOfRecommendation}}</h4>
+              <h4 class="card-title">Recommendations for user {{nameForHeader}}</h4>
             </b-col>
             <div class ="float-left">
               <b-btn v-b-modal.modalPrevent>Enter the user</b-btn>
@@ -59,7 +59,8 @@
         isBusy: false,
         totalRows:0,
         fileProducts:null,
-        nameOfRecommendation: ''
+        nameOfRecommendation: '',
+        nameForHeader:''
       }
     },
     methods:{
@@ -76,12 +77,13 @@
       },
       handleSubmit () {
         let myVisitor = new String(this.nameOfRecommendation)
+        this.nameForHeader = this.nameOfRecommendation
         let url = "http://localhost:5000/recommendations/"+myVisitor;
         this.$http.get(url).then(result => {
             console.log(result);
             this.clearName()
             this.$refs.modal.hide()
-            //window.location = "http://localhost:5000/recommendations"
+          location.reload()
         })
 
         //this.$http.post(url, myVisitor, null)
