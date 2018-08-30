@@ -17,11 +17,20 @@
         <b-table id="home"
                  striped
                  show-empty
-                 :items="getItems"
+                 :items="items"
                  :fields="fields"
+                 :current-page="currentPage"
+                 :per-page="perPage"
+                 :total-rows="totalRows"
+                 :busy.sync="isBusy"
                  ref="table"
         >
         </b-table>
+        <b-row>
+          <b-col sm="12">
+            <b-pagination align="right" :total-rows="totalRows" :per-page="perPage" v-model="currentPage"/>
+          </b-col>
+        </b-row>
       </b-card>
 
     </b-container>
@@ -64,20 +73,28 @@
           id:null,
           name:'',
         },
-        isBusy: false,
-        totalRows:0,
-        fileProducts:null
+        isBusy:false,
+        totalRows:1,
+        currentPage:1,
+        perPage:15,
+        fileProducts:null,
+        items:[]
       }
+    },
+    created() {
+      this.getItems()
     },
     methods:{
       getItems(ctx){
-        let url = "http://localhost:5000/events";
+        let url = "http://localhost:5001/events";
         this.isBusy = true;
         return this.$http.get(url).then(result => {
           console.log(result);
 
           if (result.status === 200 || result.status === 304 ){
             if(result.body.length > 0) {
+              this.items = result.body;
+              this.totalRows = this.items.length;
               return result.body
             }
           }

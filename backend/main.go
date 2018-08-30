@@ -9,9 +9,15 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello!")
-	CreateDirsForFiles()
-
+  CreateDirsForFiles()
+  csvFileName := "api/upload/" + "File.csv"
+  if _,err := os.Stat(csvFileName); err != nil {
+    if os.IsNotExist(err) {
+      fmt.Println("file does not exist\n")
+    }
+  } else {
+    routes.Algorithm(csvFileName)
+  }
 	router := gin.Default()
   router.Use(CORSMiddleware())
 	router.Static("/api/c/tmp", "./api/c/tmp")
@@ -21,7 +27,7 @@ func main() {
 	router.GET("/products", routes.GetProducts)
   router.GET("/recommendations", routes.GetRecommends)
 	router.GET("/recommendations/:id", routes.GetPerson)
-  router.Run(":5000")
+  router.Run(":5001")
 }
 
 func CreateDirsForFiles() {

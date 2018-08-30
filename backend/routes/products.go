@@ -13,6 +13,8 @@ var removeDublicatesOfVisitors []string
 var removeDublicatesOfItems []string
 var items []ItemsGlobal
 var myVisitor string
+var recommendations []Recommendation
+//var csvFileName ="api/upload/"+"File.csv"
 //var myVisitor string
 
 type EventsList struct {
@@ -31,14 +33,12 @@ func ImportEvents(c *gin.Context)  {
     c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
     return
   }
-
-
+  Algorithm(csvFileName)
 }
 
-func GetEvents (c *gin.Context) {
-  csvFileName:="api/upload/"+"File.csv"
+func Algorithm(csvFileName string)  {
   events = readingTransactionsFromFile(csvFileName)
- // fmt.Println(events)
+  // fmt.Println(events)
   removeDublicatesOfVisitors = makeUniqArrayOfVisitors(events)
   removeDublicatesOfItems = makeUniqArrayOfItems(events)
   visitors = make([] Visitor, len(removeDublicatesOfVisitors))
@@ -52,6 +52,9 @@ func GetEvents (c *gin.Context) {
     items[i].Itemid = events[i].Itemid
     items[i].Count = 1
   }
+
+}
+func GetEvents (c *gin.Context) {
   c.JSON(200,events)
 }
 
@@ -63,47 +66,38 @@ func GetProducts (c *gin.Context) {
   c.JSON(200, items)
 }
 
+func GetRecommends (c *gin.Context) {
+  if myVisitor != "" {
+    c.JSON(200, recommendations)
+  }
+}
+
 func GetPerson(c *gin.Context)  {
   myVisitor = c.Param("id")
+  matrixOfSales := makeMatrixOfSales(visitors, removeDublicatesOfVisitors, removeDublicatesOfItems)
+
+  /* init array of sales to get it into CA */
+  arrayOfSales := makeArrayOfSales(matrixOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
+
+  /* CA algorithm*/
+  prefs := MakeRatingMatrix(arrayOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
+  //products := removeDublicatesOfItems
+  products := make([]string, 0)
+  for i := 0; i < len(removeDublicatesOfItems); i++ {
+    products = append(products, strconv.Itoa(i))
+  }
+
+  indexOfVisitor := getIndVisitor(visitors, myVisitor)
+  if (indexOfVisitor == -1) {
+    fmt.Println("Error: visitor doesn't found!")
+    //os.Exit(-1)
+    c.JSON(400, ApiMessage{"User doesn't found"})
+  }
+  var err error
+  recommendations, err = GetRecommendations(prefs, /*getIndVisitor(visitors, myVisitor)*/ indexOfVisitor, products)
+  if err != nil {
+    fmt.Println("WHAT!?")
+  }
+  //fmt.Println(recommendations)
 }
-func GetRecommends (c *gin.Context) {
-    //myVisitor = c.Param("id")
-    if myVisitor != "" {
-      fmt.Println(myVisitor)
-      matrixOfSales := makeMatrixOfSales(visitors, removeDublicatesOfVisitors, removeDublicatesOfItems)
 
-      /* init array of sales to get it into CA */
-      arrayOfSales := makeArrayOfSales(matrixOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
-
-      /* CA algorithm*/
-      prefs := MakeRatingMatrix(arrayOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
-      //products := removeDublicatesOfItems
-      products := make([]string, 0)
-      for i := 0; i < len(removeDublicatesOfItems); i++ {
-        products = append(products, strconv.Itoa(i))
-      }
-
-      indexOfVisitor := getIndVisitor(visitors, myVisitor)
-      if (indexOfVisitor == -1) {
-        fmt.Println("Error: visitor doesn't found!")
-        //os.Exit(-1)
-      }
-      recommendations, err := GetRecommendations(prefs, /*getIndVisitor(visitors, myVisitor)*/ indexOfVisitor, products)
-      if err != nil {
-        fmt.Println("WHAT!?")
-      }
-      fmt.Println(recommendations)
-      /*if len(recommendations) > 0 {
-    fmt.Println("For user ", myVisitor, " recommended products are x with scores y (x --> y)")
-    for i := 0; i < len(recommendations); i++ {
-      fmt.Println(recommendations[i].Product, "-->", recommendations[i].MpRating)
-    }
-  } else {
-    fmt.Println("There are no recommendations for user ", myVisitor)
-  }*/
-      fmt.Println(len(recommendations))
-      //if len(recommendations) > 0 {
-      c.JSON(200, recommendations)
-    }
- // }
-}

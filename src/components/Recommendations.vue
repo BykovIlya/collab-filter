@@ -5,7 +5,7 @@
         <template slot="header">
           <b-row>
             <b-col sm="5">
-              <h4 class="card-title">Recommendations for user {{nameForHeader}}</h4>
+              <h4 class="card-title">Recommendations for user {{nameOfRecommendation}}</h4>
             </b-col>
             <div class ="float-left">
               <b-btn v-b-modal.modalPrevent>Enter the user</b-btn>
@@ -15,11 +15,20 @@
         <b-table id="recommendations"
                  striped
                  show-empty
-                 :items="getItems"
+                 :items="items"
                  :fields="fields"
+                 :current-page="currentPage"
+                 :per-page="perPage"
+                 :total-rows="totalRows"
+                 :busy.sync="isBusy"
                  ref="table"
         >
         </b-table>
+        <b-row>
+          <b-col sm="12">
+            <b-pagination align="right" :total-rows="totalRows" :per-page="perPage" v-model="currentPage"/>
+          </b-col>
+        </b-row>
       </b-card>
     </b-container>
     <b-modal id="modalPrevent"
@@ -41,7 +50,7 @@
     name: 'Recommendations',
     data () {
       return {
-        formUrl: 'http://localhost:5000',
+        formUrl: 'http://localhost:5001',
         fields: [
           {
             label: 'Item',
@@ -57,11 +66,16 @@
           name:'',
         },
         isBusy: false,
-        totalRows:0,
+        totalRows:1,
+        currentPage:1,
+        perPage:15,
         fileProducts:null,
         nameOfRecommendation: '',
-        nameForHeader:''
+        items:[]
       }
+    },
+    created() {
+      this.getItems()
     },
     methods:{
       clearName () {
@@ -77,29 +91,36 @@
       },
       handleSubmit () {
         let myVisitor = new String(this.nameOfRecommendation)
-        this.nameForHeader = this.nameOfRecommendation
-        let url = "http://localhost:5000/recommendations/"+myVisitor;
+        let url = "http://localhost:5001/recommendations/"+myVisitor;
         this.$http.get(url).then(result => {
             console.log(result);
-            this.clearName()
+            //this.clearName()
             this.$refs.modal.hide()
-          location.reload()
+            this.getItems()
+          //location.reload()
         })
-
-        //this.$http.post(url, myVisitor, null)
-
       },
       getItems(ctx){
-        let url = "http://localhost:5000/recommendations";
+        if (this.nameOfRecommendation.length ==0){
+          this.items = [];
+          return;
+        }
+
+        let url = "http://localhost:5001/recommendations";
         this.isBusy = true;
         return this.$http.get(url).then(result => {
           console.log(result);
 
           if (result.status === 200 || result.status === 304 ){
             if(result.body.length > 0) {
+              this.items = result.body;
+              this.totalRows = this.items.length;
+              this.isBusy = false
               return result.body
             }
           }
+          thi.isBusy = false
+          this.items = [];
           return []
         },error =>{
           this.isBusy = false;
