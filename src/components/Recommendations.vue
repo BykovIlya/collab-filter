@@ -5,10 +5,10 @@
         <template slot="header">
           <b-row>
             <b-col sm="5">
-              <h4 class="card-title">Recommendations for user {{nameOfRecommendation}}</h4>
+              <h4 class="card-title">Персональные рекомендации для покупателя {{nameOfRecommendation}}</h4>
             </b-col>
             <div class ="float-left">
-              <b-btn v-b-modal.modalPrevent>Enter the user</b-btn>
+              <b-btn v-b-modal.modalPrevent>Введите id покупателя</b-btn>
             </div>
           </b-row>
         </template>
@@ -53,11 +53,11 @@
         formUrl: 'http://localhost:5001',
         fields: [
           {
-            label: 'Item',
+            label: 'Продукт',
             key: 'product',
           },
           {
-            label: 'Score',
+            label: 'Рейтинг рекомендации',
             key: 'mpRating',
           },
         ],

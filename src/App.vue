@@ -4,10 +4,10 @@
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
-          <b-nav-item :to = "{ name: 'Home'}">Home</b-nav-item>
-          <b-nav-item :to = "{ name: 'Users'}">Users</b-nav-item>
-          <b-nav-item :to = "{ name: 'Products'}">Products</b-nav-item>
-          <b-nav-item :to = "{ name: 'Recommendations'}">Personal recommendations</b-nav-item>
+          <b-nav-item :to = "{ name: 'Home'}" exact>Главная</b-nav-item>
+          <b-nav-item :to = "{ name: 'Users'}">Покупатели</b-nav-item>
+          <b-nav-item :to = "{ name: 'Products'}">Продукты</b-nav-item>
+          <b-nav-item :to = "{ name: 'Recommendations'}">Персональные рекомендации</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>

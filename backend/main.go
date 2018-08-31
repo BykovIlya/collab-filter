@@ -27,6 +27,7 @@ func main() {
 	router.GET("/products", routes.GetProducts)
   router.GET("/recommendations", routes.GetRecommends)
 	router.GET("/recommendations/:id", routes.GetPerson)
+  router.GET("/users/:id", routes.GetPerson)
   router.Run(":5001")
 }
 

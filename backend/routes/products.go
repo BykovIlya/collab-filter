@@ -52,13 +52,20 @@ func Algorithm(csvFileName string)  {
     items[i].Itemid = events[i].Itemid
     items[i].Count = 1
   }
-
 }
 func GetEvents (c *gin.Context) {
   c.JSON(200,events)
 }
 
 func GetUsers (c *gin.Context) {
+  count := 0
+  for i := 0; i < len(visitors); i++ {
+    if len(visitors[i].Items) > 15 {
+      fmt.Println(visitors[i].Visitorid_string)
+      count++
+    }
+  }
+  fmt.Println(count)
   c.JSON(200,visitors)
 }
 
@@ -99,5 +106,7 @@ func GetPerson(c *gin.Context)  {
     fmt.Println("WHAT!?")
   }
   //fmt.Println(recommendations)
+  c.JSON(200,recommendations)
 }
+
 

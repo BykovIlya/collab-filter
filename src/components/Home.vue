@@ -5,15 +5,28 @@
         <template slot="header">
           <b-row>
             <b-col sm="5">
-              <h4 class="card-title">Table of events</h4>
+              <h4 class="card-title">Таблица истории покупок</h4>
             </b-col>
             <b-col sm="7">
               <div class ="float-right">
-                <b-btn  variant="info" @click="showModalImport">import from .csv</b-btn>
+                <b-btn  variant="info" @click="showModalImport">загрузить файл.csv</b-btn>
               </div>
             </b-col>
           </b-row>
         </template>
+
+        <b-row>
+          <b-col md="6" class="my-1">
+            <b-form-group horizontal label="Фильтр" class="mb-0">
+              <b-input-group>
+                <b-form-input v-model="filter" placeholder="Введите информацию для поиска" />
+                <b-input-group-append>
+                  <b-btn :disabled="!filter" @click="filter = ''">Очистить</b-btn>
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+        </b-row>
         <b-table id="home"
                  striped
                  show-empty
@@ -23,6 +36,7 @@
                  :per-page="perPage"
                  :total-rows="totalRows"
                  :busy.sync="isBusy"
+                 :filter="filter"
                  ref="table"
         >
         </b-table>
@@ -78,7 +92,8 @@
         currentPage:1,
         perPage:15,
         fileProducts:null,
-        items:[]
+        items:[],
+        filter: null,
       }
     },
     created() {
@@ -94,10 +109,12 @@
           if (result.status === 200 || result.status === 304 ){
             if(result.body.length > 0) {
               this.items = result.body;
+              this.isBusy = false
               this.totalRows = this.items.length;
               return result.body
             }
           }
+          this.isBusy = false
           return []
         },error =>{
           this.isBusy = false;

@@ -40,7 +40,7 @@ type ItemsGlobal struct {
  */
 type Visitor struct {
 	Visitorid_string string `json:"visitorid_string"`
-	Items [] Items          `json:"items"`
+	Items [] Items          `json:"items_array"`
 }
 
 /**
@@ -71,15 +71,6 @@ func readingTransactionsFromFile(csvFileName string) []Events {
 
       events = append(events, event)
     }
-			//events = append(events, &Events{
-			//  timestamp:     line[0],
-			//	visitorid:     line[1],
-			//	event_ :       line[2],
-			//	itemid:        line[3],
-			//	transactionid: line[4],
-			//})
-	//	}
-
 	}
 
 	return events
@@ -323,23 +314,6 @@ find element from array
 		}
 	}
 	remove(buf,buf[0])
-}
-*/
-
-
-/**
-delete elem from array
- */
-/*
-func remove(list []*Events, item *Events) []*Events {
-   for i, v := range list {
-	   if v == item {
-		   copy(list[i:], list[i+1:])
-		   list[len(list)-1] = nil
-		   list = list[:len(list)-1]
-	   }
-   }
-   return list
 }
 */
 
