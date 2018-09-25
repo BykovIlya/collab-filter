@@ -16,11 +16,11 @@ import (
 	the struct of events
  */
 type Events struct {
-		Timestamp string /*int64*/ `json:"timestamp"`
-	  Visitorid string /*int64*/  `json:"visitorid"`
-		Event_ string /*object*/ `json:"event"`
-	  Itemid string /*int64*/  `json:"itemid"`
-		Transactionid string /*float64*/ `json:"transactionid"`
+		Timestamp string /*int64*/ `form:"timestamp" json:"timestamp"`
+	  Visitorid string /*int64*/  `form:"visitorid" json:"visitorid"`
+		Event_ string /*object*/ `form:"event" json:"event"`
+	  Itemid string /*int64*/  `form:"itemid" json:"itemid"`
+		Transactionid string /*float64*/ `form:"transactionid" json:"transactionid"`
 }
 
 /**
@@ -70,6 +70,8 @@ func readingTransactionsFromFile(csvFileName string) []Events {
       event.Transactionid = line[4]
 
       events = append(events, event)
+      /*insert to bd*/
+      //InsertOneEventToDB(event)
     }
 	}
 

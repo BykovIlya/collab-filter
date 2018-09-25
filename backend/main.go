@@ -6,9 +6,22 @@ import (
   "fmt"
   "github.com/gin-gonic/gin"
   "ColabFilter/colab-filter/backend/routes"
+  "log"
+  "ColabFilter/colab-filter/backend/models"
 )
 
 func main() {
+  if models.InitDB() {
+    fmt.Println ("db init")
+
+    models.CreateDB(models.DB)
+
+    defer models.DB.Close()
+
+  } else {
+    log.Panic("Error:db not init")
+  }
+
   CreateDirsForFiles()
   csvFileName := "api/upload/" + "File.csv"
   if _,err := os.Stat(csvFileName); err != nil {
@@ -18,6 +31,9 @@ func main() {
   } else {
     routes.Algorithm(csvFileName)
   }
+
+
+
 	router := gin.Default()
   router.Use(CORSMiddleware())
 	router.Static("/api/c/tmp", "./api/c/tmp")
