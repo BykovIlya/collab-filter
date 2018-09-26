@@ -9,6 +9,13 @@ type Items struct{
 }
 
 type ItemsGlobal struct {
-  Itemid string `json:"itemid"`
-  Count int64 `json:"count"`
+  Itemid string         `json:"itemid"`
+  Count int64           `json:"count"`
+}
+
+type Product struct {
+  id int64              `json:"product_id"`
+  name string           `json:"product_name"`
+  cathegory string      `json:"product_cathegory"`
+  price float64         `json:"product_price"`
 }

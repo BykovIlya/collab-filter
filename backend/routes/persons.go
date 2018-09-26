@@ -3,7 +3,6 @@ package routes
 import (
   "github.com/gin-gonic/gin"
   "fmt"
-  "strconv"
   "ColabFilter/colab-filter/backend/algorithm"
   "ColabFilter/colab-filter/backend/utils"
 )
@@ -24,23 +23,10 @@ func GetUsers (c *gin.Context) {
 
 func GetPerson(c *gin.Context)  {
   myVisitor = c.Param("id")
-  matrixOfSales := algorithm.MakeMatrixOfSales(visitors, removeDublicatesOfVisitors, removeDublicatesOfItems)
-
-  /* init array of sales to get it into CA */
-  arrayOfSales := algorithm.MakeArrayOfSales(matrixOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
-
-  /* CA algorithm*/
-  prefs := algorithm.MakeRatingMatrix(arrayOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
-  //products := removeDublicatesOfItems
-  products := make([]string, 0)
-  for i := 0; i < len(removeDublicatesOfItems); i++ {
-    products = append(products, strconv.Itoa(i))
-  }
 
   indexOfVisitor := algorithm.GetIndVisitor(visitors, myVisitor)
   if (indexOfVisitor == -1) {
     fmt.Println("Error: visitor doesn't found!")
-    //os.Exit(-1)
     c.JSON(400, utils.ApiMessage{"User doesn't found"})
   }
   var err error
@@ -48,6 +34,10 @@ func GetPerson(c *gin.Context)  {
   if err != nil {
     fmt.Println("WHAT!?")
   }
-  //fmt.Println(recommendations)
-  c.JSON(200,recommendations)
+  if (len(recommendations) > 0) {
+    algorithm.InsertRecommendToDB(recommendations)
+    c.JSON(200, recommendations)
+  } else {
+    fmt.Println("No recommendations!")
+  }
 }

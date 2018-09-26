@@ -6,6 +6,8 @@ import (
 "fmt"
   "ColabFilter/colab-filter/backend/models"
   "ColabFilter/colab-filter/backend/algorithm"
+  "strconv"
+  . "github.com/skelterjohn/go.matrix"
 )
 
 var events []models.Events
@@ -16,6 +18,10 @@ var items []models.ItemsGlobal
 var recommendations []algorithm.Recommendation
 //var csvFileName ="api/upload/"+"File.csv"
 //var myVisitor string
+var matrixOfSales [][]float64
+var arrayOfSales []float64
+var prefs *DenseMatrix
+var products []string
 
 type EventsList struct {
   Events []models.Events `json:"events"`
@@ -37,7 +43,7 @@ func ImportEvents(c *gin.Context)  {
 }
 
 func Algorithm(csvFileName string)  {
-  models.ClearEventsDB()
+  models.ClearDB(models.DB)
   events = algorithm.ReadingTransactionsFromFile(csvFileName)
   models.ImportEventsToDB(events)
   removeDublicatesOfVisitors = algorithm.MakeUniqArrayOfVisitors(events)
@@ -53,6 +59,20 @@ func Algorithm(csvFileName string)  {
     items[i].Itemid = events[i].Itemid
     items[i].Count = 1
   }
+  matrixOfSales = algorithm.MakeMatrixOfSales(visitors, removeDublicatesOfVisitors, removeDublicatesOfItems)
+
+  /* init array of sales to get it into CA */
+  arrayOfSales = algorithm.MakeArrayOfSales(matrixOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
+
+  /* CA algorithm*/
+  prefs = algorithm.MakeRatingMatrix(arrayOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
+  //products := removeDublicatesOfItems
+  products = make([]string, 0)
+  for i := 0; i < len(removeDublicatesOfItems); i++ {
+    products = append(products, strconv.Itoa(i))
+  }
+  models.ImportPersonsToDB(visitors)
+
 }
 
 func GetEvents (c *gin.Context) {

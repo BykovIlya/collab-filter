@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"sort"
-//	"strconv"
 
 	. "github.com/skelterjohn/go.matrix"
 )

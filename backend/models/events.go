@@ -64,21 +64,3 @@ func ImportEventsToDB(events []Events) bool {
 
   return true
 }
-
-func ClearEventsDB() bool {
-  stmt, err := DB.Prepare("delete from events")
-  if (err != nil) {
-    panic(err)
-  }
-  defer stmt.Close()
-  res, err := stmt.Exec()
-  if (err != nil) {
-    panic(err)
-  }
-  affect, err := res.RowsAffected()
-  if (err != nil) {
-    panic(err)
-  }
-  fmt.Println(affect," rows deleted")
-  return true
-}
