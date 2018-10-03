@@ -31,11 +31,12 @@ func CreateDB(db *sql.DB) {
 		transactionid VARCHAR(255)
   );
   CREATE TABLE IF NOT EXISTS persons(
-    id integer PRIMARY KEY NOT NULL,
+    id VARCHAR(255) PRIMARY KEY NOT NULL,
     name VARCHAR(255),
     surname VARCHAR(255),
     age integer,
-    gender boolean
+    gender boolean,
+    properties VARCHAR(255)
   );
   CREATE TABLE IF NOT EXISTS products(
     id integer PRIMARY KEY NOT NULL,
@@ -45,7 +46,8 @@ func CreateDB(db *sql.DB) {
   );
   CREATE TABLE IF NOT EXISTS recommends(
     user_id VARCHAR(255),
-    recommendations float
+    recommend float,
+    score float
   );
   CREATE TABLE IF NOT EXISTS visitors(
     visitor_id VARCHAR(255)
@@ -57,8 +59,8 @@ func CreateDB(db *sql.DB) {
   }
 }
 
-func ClearDB( db *sql.DB) bool {
-  stmt, err := db.Prepare("delete from events")
+func ClearDB( db *sql.DB, name string) bool {
+  stmt, err := db.Prepare("delete from " + name)
   if (err != nil) {
     panic(err)
   }

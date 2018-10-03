@@ -64,3 +64,22 @@ func ImportEventsToDB(events []Events) bool {
 
   return true
 }
+
+func ReadEventsFromDB() []Events{
+  rows, err := DB.Query("SELECT timestamp,visitorid,event,itemid,transactionid FROM events")
+  if err != nil {
+    fmt.Println("Reading Error: ", err)
+    log.Fatal(err)
+  }
+  evs := []Events{}
+  for rows.Next() {
+    ev := Events{}
+    err = rows.Scan(&ev.Timestamp, &ev.Visitorid, &ev.Event_, &ev.Itemid, &ev.Transactionid)
+    if err != nil {
+      fmt.Println("Scan Error: ", err)
+      log.Fatal(err)
+    }
+    evs = append(evs, ev)
+  }
+  return evs;
+}

@@ -1,4 +1,4 @@
-package algorithm
+package models
 
 import (
 	"math"
@@ -10,20 +10,19 @@ import (
 	"log"
 	"sort"
   "fmt"
-  "ColabFilter/colab-filter/backend/models"
 )
 
 /**
 	reading data from .csv
  */
-func ReadingTransactionsFromFile(csvFileName string) []models.Events {
+func ReadingTransactionsFromFile(csvFileName string) []Events {
 	csvFile, err := os.Open(csvFileName)
   if err != nil {
     //error
   }
   fmt.Println("success open file!")
 	reader := csv.NewReader(bufio.NewReader(csvFile))
-	var events []models.Events
+	var events []Events
 	for {
 		line, error := reader.Read()
 		if error == io.EOF {
@@ -32,7 +31,7 @@ func ReadingTransactionsFromFile(csvFileName string) []models.Events {
 			log.Fatal(error)
 		}
 		if line[2] == "transaction" {
-      var event= models.Events{}
+      var event= Events{}
       event.Timestamp = line[0]
       event.Visitorid = line[1]
       event.Event_ = line[2]
@@ -48,7 +47,7 @@ func ReadingTransactionsFromFile(csvFileName string) []models.Events {
 	return events
 }
 
-func MakeUniqArrayOfVisitors(events []models.Events) []string {
+func MakeUniqArrayOfVisitors(events []Events) []string {
 	bufOfVisitors := make ([] string, len(events))
 	for i := 0; i < len(events); i++ {
 		bufOfVisitors[i] = events[i].Visitorid
@@ -58,7 +57,7 @@ func MakeUniqArrayOfVisitors(events []models.Events) []string {
 	return removeDublicatesOfVisitors
 }
 
-func MakeUniqArrayOfItems(events []models.Events) [] string {
+func MakeUniqArrayOfItems(events []Events) [] string {
 	bufOfItems := make ([] string, len(events))
 	for i := 0; i < len(events); i++ {
 		bufOfItems[i] = events[i].Itemid
@@ -68,7 +67,7 @@ func MakeUniqArrayOfItems(events []models.Events) [] string {
 	return removeDublicatesOfItems
 }
 
-func MakeMatrixOfSales (visitors [] models.Visitor, removeDublicatesOfVisitors [] string, removeDublicatesOfItems [] string) [][] float64{
+func MakeMatrixOfSales (visitors [] Visitor, removeDublicatesOfVisitors [] string, removeDublicatesOfItems [] string) [][] float64{
 	/*
 		init matrix
 	 */
@@ -94,7 +93,7 @@ func MakeArrayOfSales (matrixOfSales [][] float64, n int, m int) [] float64 {
 	arrayOfSales = toArray(matrixOfSales, n, m, arrayOfSales)
 	return arrayOfSales
 }
-func AddCountToEachProductOfEachVisitor (visitors [] models.Visitor) {
+func AddCountToEachProductOfEachVisitor (visitors [] Visitor) {
 	for i := 0; i < len(visitors); i++  {
 		sort.Slice(visitors[i].Items, func(j, k int) bool { return visitors[i].Items[j].Itemid_string < visitors[i].Items[k].Itemid_string })
 	}
@@ -105,7 +104,7 @@ func AddCountToEachProductOfEachVisitor (visitors [] models.Visitor) {
 /**
 	get index of visitor
  */
-func GetIndVisitor (visitor [] models.Visitor, finder string) int {
+func GetIndVisitor (visitor [] Visitor, finder string) int {
 	for i := 0; i < len(visitor); i++ {
 		if visitor[i].Visitorid_string == finder {
 			return i
@@ -129,7 +128,7 @@ func getIndItem (items [] string, finder string) int {
 /**
 	set the field visitorid_strnig of the structure Visitor to the value of unique visitors from the array buffer
  */
-func InitVisitors (visitor [] models.Visitor, buffer [] string) {
+func InitVisitors (visitor [] Visitor, buffer [] string) {
 	for i := 0; i < len(buffer); i++ {
 		visitor[i].Visitorid_string =  buffer[i]
 	}
@@ -138,11 +137,11 @@ func InitVisitors (visitor [] models.Visitor, buffer [] string) {
 /**
 	set each visitor an array of items
  */
-func AddItemsToVisitor (visitor [] models.Visitor, events []models.Events){
+func AddItemsToVisitor (visitor [] Visitor, events []Events){
 	for i := 0; i < len(visitor); i++ {
 		for j := 0; j < len(events); j++ {
 			if visitor[i].Visitorid_string == events[j].Visitorid {
-				visitor[i].Items = append(visitor[i].Items, models.Items{
+				visitor[i].Items = append(visitor[i].Items, Items{
 					Itemid_string: events[j].Itemid,
 					Itemid_count: 1,
 				})
@@ -223,12 +222,12 @@ func initCountToResult (item []Items) {
 /**
 	find count of each items in array of items for each visitor
  */
-func findCount (item []models.Items) [] models.Items{
-	buffer := make( [] models.Items, 0);
+func findCount (item []Items) [] Items{
+	buffer := make( [] Items, 0);
 	var prev string
 	for i := 0; i < len(item); i++ {
 		if (item[i].Itemid_string != prev) {
-			buffer = append(buffer, models.Items {
+			buffer = append(buffer, Items {
 				item[i].Itemid_string,
 				1,
 			})

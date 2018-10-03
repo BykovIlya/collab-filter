@@ -22,6 +22,7 @@ var matrixOfSales [][]float64
 var arrayOfSales []float64
 var prefs *DenseMatrix
 var products []string
+var isImported = false
 
 type EventsList struct {
   Events []models.Events `json:"events"`
@@ -39,30 +40,41 @@ func ImportEvents(c *gin.Context)  {
     c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
     return
   }
+  models.ClearDB(models.DB,"events")
+  models.ClearDB(models.DB, "visitors")
+  models.ClearDB(models.DB,"recommends")
+  events = models.ReadingTransactionsFromFile(csvFileName)
+  models.ImportEventsToDB(events)
+  removeDublicatesOfVisitors = models.MakeUniqArrayOfVisitors(events)
+  models.ImportPersonsToDB(models.InitPersons(removeDublicatesOfVisitors))
+  isImported = true
   Algorithm(csvFileName)
 }
 
 func Algorithm(csvFileName string)  {
-  models.ClearDB(models.DB)
-  events = algorithm.ReadingTransactionsFromFile(csvFileName)
-  models.ImportEventsToDB(events)
-  removeDublicatesOfVisitors = algorithm.MakeUniqArrayOfVisitors(events)
-  removeDublicatesOfItems = algorithm.MakeUniqArrayOfItems(events)
+  if (isImported == false) {
+    events = models.ReadEventsFromDB()
+    removeDublicatesOfVisitors = models.MakeUniqArrayOfVisitors(events)
+    models.ImportPersonsToDB(models.InitPersons(removeDublicatesOfVisitors))
+    fmt.Println("Read from DB!")
+  }
+  removeDublicatesOfItems = models.MakeUniqArrayOfItems(events)
   visitors = make([] models.Visitor, len(removeDublicatesOfVisitors))
+  fmt.Println("COUNT OF VISITORS:", len(visitors))
   /* make struct of visitors */
-  algorithm.InitVisitors(visitors, removeDublicatesOfVisitors)
+  models.InitVisitors(visitors, removeDublicatesOfVisitors)
   /* add items to each visitor */
-  algorithm.AddItemsToVisitor(visitors,events)
-  algorithm.AddCountToEachProductOfEachVisitor(visitors)
+  models.AddItemsToVisitor(visitors,events)
+  models.AddCountToEachProductOfEachVisitor(visitors)
   items = make ([]models.ItemsGlobal, len(events))
   for i := 0; i < len(events); i++ {
     items[i].Itemid = events[i].Itemid
     items[i].Count = 1
   }
-  matrixOfSales = algorithm.MakeMatrixOfSales(visitors, removeDublicatesOfVisitors, removeDublicatesOfItems)
+  matrixOfSales = models.MakeMatrixOfSales(visitors, removeDublicatesOfVisitors, removeDublicatesOfItems)
 
   /* init array of sales to get it into CA */
-  arrayOfSales = algorithm.MakeArrayOfSales(matrixOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
+  arrayOfSales = models.MakeArrayOfSales(matrixOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
 
   /* CA algorithm*/
   prefs = algorithm.MakeRatingMatrix(arrayOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
@@ -71,7 +83,7 @@ func Algorithm(csvFileName string)  {
   for i := 0; i < len(removeDublicatesOfItems); i++ {
     products = append(products, strconv.Itoa(i))
   }
-  models.ImportPersonsToDB(visitors)
+  models.ImportVisitorsToDB(visitors)
 
 }
 

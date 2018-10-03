@@ -19,3 +19,5 @@ type Product struct {
   cathegory string      `json:"product_cathegory"`
   price float64         `json:"product_price"`
 }
+
+

@@ -11,40 +11,38 @@ import (
 )
 
 func main() {
-  if models.InitDB() {
-    fmt.Println ("db init")
+	if models.InitDB() {
+		fmt.Println ("db init")
 
-    models.CreateDB(models.DB)
+		models.CreateDB(models.DB)
 
-    defer models.DB.Close()
+		defer models.DB.Close()
 
-  } else {
-    log.Panic("Error:db not init")
-  }
+	} else {
+		log.Panic("Error:db not init")
+	}
 
-  CreateDirsForFiles()
-  csvFileName := "api/upload/" + "File.csv"
-  if _,err := os.Stat(csvFileName); err != nil {
-    if os.IsNotExist(err) {
-      fmt.Println("file does not exist\n")
-    }
-  } else {
-    routes.Algorithm(csvFileName)
-  }
-
-
+	CreateDirsForFiles()
+	csvFileName := "api/upload/" + "File.csv"
+	if _,err := os.Stat(csvFileName); err != nil {
+	if os.IsNotExist(err) {
+	  	fmt.Println("file does not exist\n")
+	}
+	} else {
+		routes.Algorithm(csvFileName)
+	}
 
 	router := gin.Default()
-  router.Use(CORSMiddleware())
+	router.Use(CORSMiddleware())
 	router.Static("/api/c/tmp", "./api/c/tmp")
-  router.POST("/import", routes.ImportEvents)
+	router.POST("/import", routes.ImportEvents)
 	router.GET("/events",routes.GetEvents)
-  router.GET("/users", routes.GetUsers)
+	router.GET("/users", routes.GetUsers)
 	router.GET("/products", routes.GetProducts)
-  router.GET("/recommendations", routes.GetRecommends)
+	router.GET("/recommendations", routes.GetRecommends)
 	router.GET("/recommendations/:id", routes.GetPerson)
-  router.GET("/users/:id", routes.GetPerson)
-  router.Run(":5001")
+	router.GET("/users/:id", routes.GetPerson)
+	router.Run(":5001")
 }
 
 func CreateDirsForFiles() {
