@@ -125,6 +125,5 @@ func ImportPersonsToDB(ps []Person) bool {
     log.Fatal(err)
     return false
   }
-
   return true
 }
