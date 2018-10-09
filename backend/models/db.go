@@ -25,9 +25,9 @@ func CreateDB(db *sql.DB) {
   CREATE TABLE IF NOT EXISTS events(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     timestamp VARCHAR(255) NOT NULL,
-	  visitorid VARCHAR(255) NOT NULL,
+	  visitorid VARCHAR(255) NOT NULL REFERENCES persons (id),
 		event VARCHAR(255) NOT NULL,
-	  itemid VARCHAR(255) NOT NULL,
+	  itemid VARCHAR(255) NOT NULL REFERENCES products(id),
 		transactionid VARCHAR(255)
   );
   CREATE TABLE IF NOT EXISTS persons(
@@ -39,18 +39,19 @@ func CreateDB(db *sql.DB) {
     properties VARCHAR(255)
   );
   CREATE TABLE IF NOT EXISTS products(
-    id integer PRIMARY KEY NOT NULL,
+    id VARCHAR(255) PRIMARY KEY NOT NULL,
     name VARCHAR(255),
     cathegory VARCHAR(255),
     price real
   );
   CREATE TABLE IF NOT EXISTS recommends(
-    user_id VARCHAR(255),
+    user_id VARCHAR(255) REFERENCES persons(id),
     recommend float,
     score float
   );
   CREATE TABLE IF NOT EXISTS visitors(
-    visitor_id VARCHAR(255)
+    visitor_id VARCHAR(255) REFERENCES persons(id),
+    item_id VARCHAR(255) REFERENCES products(id)
   );
   `
   _, err := db.Exec(sql)

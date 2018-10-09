@@ -18,7 +18,8 @@ import (
 func ReadingTransactionsFromFile(csvFileName string) []Events {
 	csvFile, err := os.Open(csvFileName)
   if err != nil {
-    //error
+    fmt.Println("Error with reading from file:", err)
+    log.Fatal(err)
   }
   fmt.Println("success open file!")
 	reader := csv.NewReader(bufio.NewReader(csvFile))

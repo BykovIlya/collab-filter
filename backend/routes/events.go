@@ -47,6 +47,8 @@ func ImportEvents(c *gin.Context)  {
   models.ImportEventsToDB(events)
   removeDublicatesOfVisitors = models.MakeUniqArrayOfVisitors(events)
   models.ImportPersonsToDB(models.InitPersons(removeDublicatesOfVisitors))
+  removeDublicatesOfItems = models.MakeUniqArrayOfItems(events)
+  models.ImportProductsToDB(models.InitProducts(removeDublicatesOfItems))
   isImported = true
   Algorithm(csvFileName)
 }
@@ -56,9 +58,12 @@ func Algorithm(csvFileName string)  {
     events = models.ReadEventsFromDB()
     removeDublicatesOfVisitors = models.MakeUniqArrayOfVisitors(events)
     models.ImportPersonsToDB(models.InitPersons(removeDublicatesOfVisitors))
+
+    removeDublicatesOfItems = models.MakeUniqArrayOfItems(events)
+    models.ImportProductsToDB(models.InitProducts(removeDublicatesOfItems))
+
     fmt.Println("Read from DB!")
   }
-  removeDublicatesOfItems = models.MakeUniqArrayOfItems(events)
   visitors = make([] models.Visitor, len(removeDublicatesOfVisitors))
   fmt.Println("COUNT OF VISITORS:", len(visitors))
   /* make struct of visitors */

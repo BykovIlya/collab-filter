@@ -6,6 +6,7 @@ import (
   "github.com/lib/pq"
   "math/rand"
   "time"
+  "strconv"
 )
 
 /**
@@ -28,36 +29,37 @@ type Person struct {
 func ImportVisitorsToDB(visitor []Visitor) bool {
   db, err := DB.Begin()
   if err != nil {
-    fmt.Println("Input Error: ", err)
+    fmt.Println("Input Error visitors 1: ", err)
     log.Fatal(err)
     return false
   }
-  stmt, err := db.Prepare(pq.CopyIn("visitors","visitor_id"))
-  for _, ev := range visitor {
-    _, err = stmt.Exec(ev.Visitorid_string)
-    if err != nil {
-      fmt.Println("Input Error: ", err)
-      log.Fatal(err)
+  stmt, err := db.Prepare(pq.CopyIn("visitors","visitor_id", "item_id"))
+  for i := 0; i  < len(visitor); i++ {
+    for j := 0; j < len(visitor[i].Items); j++ {
+      _, err = stmt.Exec(visitor[i].Visitorid_string, visitor[i].Items[j].Itemid_string)
+      if err != nil {
+        fmt.Println("Input Error visitors 2: ", err)
+        log.Fatal(err)
+        }
+      }
     }
-  }
-
   _, err = stmt.Exec()
   if err != nil {
-    fmt.Println("Error Import ",  err)
+    fmt.Println("Error Import ", err)
     log.Fatal(err)
     return false
   }
 
   err = stmt.Close()
   if err != nil {
-    fmt.Println("Error Import ",  err)
+    fmt.Println("Error Import ", err)
     log.Fatal(err)
     return false
   }
 
   err = db.Commit()
   if err != nil {
-    fmt.Println("Error Import ",  err)
+    fmt.Println("Error Import ", err)
     log.Fatal(err)
     return false
   }
@@ -72,8 +74,12 @@ func InitPersons(ids []string) []Person {
   for i := 0; i < len(ids); i++ {
     p := Person{}
     p.id = ids[i]
-    p.name = "user_name"
-    p.surname = "user_surname"
+  /*  n := []string{"user_name", string(i)}
+    s := []string{"user_surname", string(i)}
+    p.name = string(strings.Join(n, "_"))
+    p.surname = string(strings.Join(s, "_"))*/
+    p.name = "user_name_" + strconv.Itoa(i)
+    p.surname = "user_surname_" + strconv.Itoa(i)
     p.age = rand.Int63n(56) + 14
     gender := rand.Intn(2)
     if (gender == 1) {
@@ -88,9 +94,23 @@ func InitPersons(ids []string) []Person {
 }
 
 func ImportPersonsToDB(ps []Person) bool {
-  fmt.Println(ps[2])
   fmt.Println("IMPORT PERSONS")
   db, err := DB.Begin()
+  rows, err := db.Query("SELECT COUNT (id) FROM persons")
+  if err != nil {
+    fmt.Println("Error Count: ", err)
+    log.Fatal(err)
+    return false
+  }
+  defer rows.Close();
+  var count int64
+  for rows.Next() {
+    rows.Scan(&count)
+  }
+  if (count > 0) {
+    fmt.Println("db Persons is not empty")
+    return  false
+  }
   if err != nil {
     fmt.Println("Input Error: ", err)
     log.Fatal(err)
