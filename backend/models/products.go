@@ -25,8 +25,10 @@ type ItemsGlobal struct {
 type Product struct {
   id string             `json:"product_id"`
   name string           `json:"product_name"`
-  cathegory string      `json:"product_cathegory"`
+  cathegory int64       `json:"product_cathegory"`
   price float64         `json:"product_price"`
+/*  stock int64
+  subcategory int64*/
 }
 
 
@@ -38,8 +40,8 @@ func InitProducts(ids []string) []Product {
     p := Product{}
     p.id = ids[i]
     p.name = "product_name_" + strconv.Itoa(i)
-    p.cathegory = strconv.Itoa(rand.Intn(10)+1)
-    p.price = 100
+    p.cathegory = rand.Int63n(10)+1
+    p.price = float64(rand.Int63n(1000) + 20)
     ps = append(ps, p)
   }
   return ps
@@ -98,4 +100,54 @@ func ImportProductsToDB(ps []Product) bool {
     return false
   }
   return true
+}
+
+func GetProductsFromDB()  []Product{
+  rows, err := DB.Query("SELECT id, name, cathegory, price FROM products")
+  recs := []Product{}
+  if (rows == nil) {
+    fmt.Println("ERROR!!")
+    return []Product{}
+  }
+  for rows.Next() {
+    rec := Product{}
+    err = rows.Scan(&rec.id, &rec.name, &rec.cathegory, &rec.price)
+    if err != nil {
+      fmt.Println("Scan Error: ", err)
+      log.Fatal(err)
+    }
+    recs = append(recs, rec)
+  }
+  if err != nil {
+    fmt.Println("Reading Error: ", err)
+    log.Fatal(err)
+  }
+  if (len(recs) > 0) {
+    return recs
+  } else {
+    return []Product{}
+  }
+}
+
+func GetProductFromDB(pr string)  Product{
+  rows, err := DB.Query("SELECT id, name, cathegory, price FROM products WHERE id=$1", pr)
+  if (rows == nil) {
+    fmt.Println("ERROR!!")
+    return Product{}
+  }
+  rec_ := Product{}
+  for rows.Next() {
+    rec := Product{}
+    err = rows.Scan(&rec.id, &rec.name, &rec.cathegory, &rec.price)
+    rec_ = rec
+    if err != nil {
+      fmt.Println("Scan Error: ", err)
+      log.Fatal(err)
+    }
+  }
+  if err != nil {
+    fmt.Println("Reading Error: ", err)
+    log.Fatal(err)
+  }
+  return rec_
 }

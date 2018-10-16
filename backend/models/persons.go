@@ -147,3 +147,30 @@ func ImportPersonsToDB(ps []Person) bool {
   }
   return true
 }
+
+func GetPersonsFromDB()  []Person{
+  rows, err := DB.Query("SELECT id, name, surname, age, gender, properties FROM persons")
+  recs := []Person{}
+  if (rows == nil) {
+    fmt.Println("ERROR!!")
+    return []Person{}
+  }
+  for rows.Next() {
+    rec := Person{}
+    err = rows.Scan(&rec.id, &rec.name, &rec.surname, &rec.age, &rec.gender, &rec.properties)
+    if err != nil {
+      fmt.Println("Scan Error: ", err)
+      log.Fatal(err)
+    }
+    recs = append(recs, rec)
+  }
+  if err != nil {
+    fmt.Println("Reading Error: ", err)
+    log.Fatal(err)
+  }
+  if (len(recs) > 0) {
+    return recs
+  } else {
+    return []Person{}
+  }
+}

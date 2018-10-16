@@ -8,6 +8,7 @@ import (
   "ColabFilter/colab-filter/backend/algorithm"
   "strconv"
   . "github.com/skelterjohn/go.matrix"
+	"github.com/fxsjy/gonn/gonn"
 )
 
 var events []models.Events
@@ -88,8 +89,13 @@ func Algorithm(csvFileName string)  {
   for i := 0; i < len(removeDublicatesOfItems); i++ {
     products = append(products, strconv.Itoa(i))
   }
+  /*myProduct := models.GetProductFromDB("17108")
+  fmt.Println(myProduct) */
+  models.CreateNeuralNetworkPerson(models.GetPersonsFromDB(), models.GetProductsFromDB(), visitors)
+  nn := gonn.LoadNN("gonnPerson")
+  out := nn.Forward([]float64{0.0, 55.0, 12.0, 19.0})
+  fmt.Println("nn result:", models.GetResult(out))
   models.ImportVisitorsToDB(visitors)
-
 }
 
 func GetEvents (c *gin.Context) {

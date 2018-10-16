@@ -18,7 +18,6 @@ func GetPerson(c *gin.Context)  {
   myVisitor = c.Param("id")
   recommendations = models.GetRecommendsFromBD(myVisitor)
   if (len(recommendations) == 0) {
-  	fmt.Println("NEW RECOMMENDATION!!!")
     indexOfVisitor := models.GetIndVisitor(visitors, myVisitor)
     if (indexOfVisitor == -1) {
       fmt.Println("Error: visitor doesn't found!")
@@ -33,7 +32,6 @@ func GetPerson(c *gin.Context)  {
       models.ImportRecommendsToDB(myVisitor, recommendations)
       c.JSON(200, recommendations)
     } else {
-		fmt.Println("OLD RECOMMENDATION!!!")
       	fmt.Println("No recommendations!")
     }
   } else {

@@ -41,7 +41,7 @@ func CreateDB(db *sql.DB) {
   CREATE TABLE IF NOT EXISTS products(
     id VARCHAR(255) PRIMARY KEY NOT NULL,
     name VARCHAR(255),
-    cathegory VARCHAR(255),
+    cathegory integer,
     price real
   );
   CREATE TABLE IF NOT EXISTS recommends(

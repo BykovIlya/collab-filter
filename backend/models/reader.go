@@ -302,3 +302,14 @@ func optimizeScores(scores [] float64, good [] float64) []float64{
 	return good
 }
 
+func FindProductInPerson (id int, id_product string, visitors []Visitor) bool {
+/*	for i := 0; i < len(visitors); i++ { */
+			for j := 0; j < len(visitors[id].Items) ; j++ {
+				if (id_product == visitors[id].Items[j].Itemid_string) {
+					return true
+				}
+			}
+		//}
+	/*}*/
+	return false
+}

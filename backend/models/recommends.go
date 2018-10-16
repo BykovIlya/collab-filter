@@ -55,13 +55,10 @@ func ImportRecommendsToDB(visitor string, recommendations []algorithm.Recommenda
 func GetRecommendsFromBD(user string) []algorithm.Recommendation{
 	rows, err := DB.Query("SELECT recommend,score FROM recommends WHERE user_id=$1",user)
 	recs := []algorithm.Recommendation{}
-	fmt.Println(rows)
-	fmt.Println("ROW BEGIN!!!")
 	if (rows == nil) {
 		fmt.Println("ERROR!!")
 		return []algorithm.Recommendation{}
 	}
-	fmt.Println("ROW BEGIN222!!!")
 	for rows.Next() {
 		rec := algorithm.Recommendation{}
 		err = rows.Scan(&rec.Product, &rec.MpRating)
