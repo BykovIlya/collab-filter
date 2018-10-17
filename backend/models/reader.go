@@ -21,6 +21,9 @@ func ReadingTransactionsFromFile(csvFileName string) []Events {
     fmt.Println("Error with reading from file:", err)
     log.Fatal(err)
   }
+
+  //defer csvFile.Close()
+
   fmt.Println("success open file!")
 	reader := csv.NewReader(bufio.NewReader(csvFile))
 	var events []Events
