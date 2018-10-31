@@ -53,15 +53,15 @@ func CreateDB(db *sql.DB) {
     visitor_id VARCHAR(255) REFERENCES persons(id),
     item_id VARCHAR(255) REFERENCES products(id)
   );
-  CREATE TABLE IF NOT EXISTS inputNN(
-    gender real,
-    age real,
-    category real,
-    price real
+  CREATE TABLE IF NOT EXISTS inputnn(
+    gender float,
+    age float,
+    category float,
+    price float
   );
-  CREATE TABLE IF NOT EXISTS targetNN(
-    yes real,
-    nnn real
+  CREATE TABLE IF NOT EXISTS targetnn(
+    yes float,
+    nnn float
   );
   `
   _, err := db.Exec(sql)

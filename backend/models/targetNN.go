@@ -29,9 +29,10 @@ func ImportTargetNNToDB(arr [][]float64) bool {
 		log.Fatal(err)
 		return false
 	}
-	stmt, err := db.Prepare(pq.CopyIn("targetNN","yes", "nnn"))
+	stmt, err := db.Prepare(pq.CopyIn("targetnn","yes", "nnn"))
 	for i := 0; i  < len(arr); i++ {
 			_, err = stmt.Exec(arr[i][0], arr[i][1])
+			//_, err = stmt.Exec(0, 1)
 			if err != nil {
 				fmt.Println("Input Error 2: ", err)
 				log.Fatal(err)

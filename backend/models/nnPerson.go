@@ -1,9 +1,9 @@
 package models
 
 import (
-	"fmt"
-	"time"
 	"github.com/fxsjy/gonn/gonn"
+	"time"
+	"fmt"
 )
 
 func convertBoolToFloat64 (in bool) float64 {
@@ -13,6 +13,8 @@ func convertBoolToFloat64 (in bool) float64 {
 	}
 	return out
 }
+
+var input, target [][]float64
 
 func CreateInputPerson(persons []Person, product Product, visitors  [] Visitor) ([][]float64, [][]float64) {
 	input := make ([][]float64, 0)
@@ -38,10 +40,6 @@ func CreateTargetPerson(persons []Person, product Product, visitors []Visitor) [
 	return output
 }*/
 
-
-
-var input, target [][]float64
-
 func quickAppendIn(el []float64) {
 	input = append(input,el)
 }
@@ -51,10 +49,8 @@ func quickAppendOut(el []float64) {
 }
 
 func quickAppend(j int, in, o [][]float64) {
-	//for i := j; i < j + 10; i++ {
 		 quickAppendIn(in[j])
 		 quickAppendOut(o[j])
-//	}
 }
 
 /*func write(arr [][]float64, filename string) error{
@@ -96,15 +92,16 @@ func CreateNeuralNetworkPerson(persons []Person, product []Product, visitors []V
 	if err != nil {
 		return
 	}*/
-	if (!ImportInputNNToDB(input) && !ImportTargetNNToDB(target)) {
+	//fmt.Println(input)
+	//if (!ImportInputNNToDB(input) && !ImportTargetNNToDB(target)) {
 
-	} else {
+	//} else {
 		input = make([][]float64, 0)
-		target = make([][] float64, 0)
-		for i := 0; i < len(product); i++ {
+		target = make([][] float64,0)
+		for i := 0; i < 1000/*len(product)*/; i++ {
 			start := time.Now()
 			in, o := CreateInputPerson(persons, product[i], visitors)
-			for j := 0; j < len(persons); j++ {
+			for j := 0; j < /*len(persons)*/1000; j++ {
 				//fmt.Println(i," ")
 				//input = append(input,in[j])
 				//target = append(target,o[j])
@@ -116,12 +113,15 @@ func CreateNeuralNetworkPerson(persons []Person, product []Product, visitors []V
 			}
 			t := time.Now()
 			fmt.Println(i, ":", t.Sub(start))
+			//fmt.Println(input[i])
 		}
+		ImportInputNNToDB(input)
+		ImportTargetNNToDB(target)
 		/*write(input, "in.csv")
 		write(target, "target.csv")*/
 
-	}
-	nn.Train(input, target, 1000)
+	//}
+	nn.Train(input, target, 100)
 	gonn.DumpNN("gonnPerson", nn)
 }
 
