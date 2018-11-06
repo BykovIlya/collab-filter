@@ -4,6 +4,7 @@ import (
 	"github.com/fxsjy/gonn/gonn"
 	"time"
 	"fmt"
+	"os"
 )
 
 func convertBoolToFloat64 (in bool) float64 {
@@ -29,17 +30,6 @@ func CreateInputPerson(persons []Person, product Product, visitors  [] Visitor) 
 	return input, output
 }
 
-/*
-func CreateTargetPerson(persons []Person, product Product, visitors []Visitor) [][]float64 {
-	output := make ([][]float64, 0)
-	for i := 0; i < len(persons); i++ {
-		buf := FindProductInPerson(i, product.id, visitors)
-		output = append(output, []float64 {
-			convertBoolToFloat64(buf), convertBoolToFloat64(!buf)})
-	}
-	return output
-}*/
-
 func quickAppendIn(el []float64) {
 	input = append(input,el)
 }
@@ -53,76 +43,34 @@ func quickAppend(j int, in, o [][]float64) {
 		 quickAppendOut(o[j])
 }
 
-/*func write(arr [][]float64, filename string) error{
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	w := bufio.NewWriter(file)
-	for _, line := range arr {
-		fmt.Fprintln(w, line)
-	}
-	return w.Flush()
-}*/
-/*func read(filename string) ([][] float64){
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil
-	}
-	defer file.Close()
-
-	var lines [][] float64
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-
-		lines = append(lines, scanner.Text())
-	}
-	return lines
-}*/
-
-func CreateNeuralNetworkPerson(persons []Person, product []Product, visitors []Visitor) {
-	nn := gonn.DefaultNetwork(4,10,2, false)
-/*	fileIn, err := os.Open("in.csv")
-	if err != nil {
-		return
-	}
-	fileOut, err := os.Open("target.csv")
-	if err != nil {
-		return
-	}*/
-	//fmt.Println(input)
-	//if (!ImportInputNNToDB(input) && !ImportTargetNNToDB(target)) {
-
-	//} else {
+func CreateNeuralNetworkPerson(persons []Person, product []Product, visitors []Visitor, need bool) {
+	if (need) {
+		nn := gonn.DefaultNetwork(4, 10, 2, false)
 		input = make([][]float64, 0)
-		target = make([][] float64,0)
-		for i := 0; i < 1000/*len(product)*/; i++ {
-			start := time.Now()
-			in, o := CreateInputPerson(persons, product[i], visitors)
-			for j := 0; j < /*len(persons)*/1000; j++ {
-				//fmt.Println(i," ")
-				//input = append(input,in[j])
-				//target = append(target,o[j])
-				//quickAppendIn(in[j])
-				//quickAppendOut(o[j])
-				quickAppend(j, in, o)
-				// fmt.Println(input)
-				// fmt.Println(target)
+		target = make([][] float64, 0)
+		if (IsEmptyInputNN() && IsEmptyTargetNN()) {
+			for i := 0; i < 1000 /*len(product)*/ ; i++ {
+				start := time.Now()
+				in, o := CreateInputPerson(persons, product[i], visitors)
+				for j := 0; j < /*len(persons)*/ 1000; j++ {
+					quickAppend(j, in, o)
+				}
+				t := time.Now()
+				fmt.Println(i, ":", t.Sub(start))
 			}
-			t := time.Now()
-			fmt.Println(i, ":", t.Sub(start))
-			//fmt.Println(input[i])
+			ImportInputNNToDB(input)
+			ImportTargetNNToDB(target)
+			nn.Train(input, target, 100) //minimum
+			gonn.DumpNN("gonnPerson", nn)
+		} else {
+			input = GetInputNNFromDB()
+			target = GetTargetNNFromDB()
+			nn.Train(input, target, 100) //minimum
+			gonn.DumpNN("gonnPerson", nn)
 		}
-		ImportInputNNToDB(input)
-		ImportTargetNNToDB(target)
-		/*write(input, "in.csv")
-		write(target, "target.csv")*/
-
-	//}
-	nn.Train(input, target, 100)
-	gonn.DumpNN("gonnPerson", nn)
+	} else {
+		fmt.Println("nothing to do in NN")
+	}
 }
 
 func GetResult(output [] float64) int64{
@@ -142,4 +90,19 @@ func GetResult(output [] float64) int64{
 
 	}
 	return -1
+}
+
+func deleteFile(file string) {
+	var err = os.Remove(file)
+	if isError(err) { return }
+
+	fmt.Println("old gonn fille deleted")
+}
+
+func isError(err error) bool {
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return (err != nil)
 }

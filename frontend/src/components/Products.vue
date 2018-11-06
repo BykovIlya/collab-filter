@@ -54,9 +54,6 @@
           {
             key: 'itemid',
           },
-     /*     {
-            key: 'count',
-          }, */
         ],
         newItem: {
           id:null,

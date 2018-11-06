@@ -8,7 +8,6 @@ import (
   "ColabFilter/colab-filter/backend/algorithm"
   "strconv"
   . "github.com/skelterjohn/go.matrix"
-	"github.com/fxsjy/gonn/gonn"
 )
 
 var events []models.Events
@@ -17,8 +16,6 @@ var removeDublicatesOfVisitors []string
 var removeDublicatesOfItems []string
 var items []models.ItemsGlobal
 var recommendations []algorithm.Recommendation
-//var csvFileName ="api/upload/"+"File.csv"
-//var myVisitor string
 var matrixOfSales [][]float64
 var arrayOfSales []float64
 var prefs *DenseMatrix
@@ -84,17 +81,15 @@ func Algorithm(csvFileName string)  {
 
   /* CA algorithm*/
   prefs = algorithm.MakeRatingMatrix(arrayOfSales, len(removeDublicatesOfVisitors), len(removeDublicatesOfItems))
-  //products := removeDublicatesOfItems
   products = make([]string, 0)
   for i := 0; i < len(removeDublicatesOfItems); i++ {
     products = append(products, strconv.Itoa(i))
   }
-  /*myProduct := models.GetProductFromDB("17108")
-  fmt.Println(myProduct) */
-  models.CreateNeuralNetworkPerson(models.GetPersonsFromDB(), models.GetProductsFromDB(), visitors)
+/*  need := false
+  models.CreateNeuralNetworkPerson(models.GetPersonsFromDB(), models.GetProductsFromDB(), visitors, need)
   nn := gonn.LoadNN("gonnPerson")
   out := nn.Forward([]float64{0.0, 55.0, 12.0, 19.0})
-  fmt.Println("nn result:", models.GetResult(out))
+  fmt.Println("nn result:", models.GetResult(out))   */   //  <---- neuralNetwork
   models.ImportVisitorsToDB(visitors)
 }
 

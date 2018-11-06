@@ -74,10 +74,6 @@ func InitPersons(ids []string) []Person {
   for i := 0; i < len(ids); i++ {
     p := Person{}
     p.id = ids[i]
-  /*  n := []string{"user_name", string(i)}
-    s := []string{"user_surname", string(i)}
-    p.name = string(strings.Join(n, "_"))
-    p.surname = string(strings.Join(s, "_"))*/
     p.name = "user_name_" + strconv.Itoa(i)
     p.surname = "user_surname_" + strconv.Itoa(i)
     p.age = rand.Int63n(56) + 14

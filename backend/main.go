@@ -42,6 +42,7 @@ func main() {
 	router.GET("/recommendations", routes.GetRecommends)
 	router.GET("/recommendations/:id", routes.GetPerson)
 	router.GET("/users/:id", routes.GetPerson)
+	router.GET("/neuralnetwork/:age/:gender/:category/:price", routes.GetResult)
 	router.Run(":5001")
 }
 

@@ -18,12 +18,3 @@ func CreateTargetProduct(persons []Person, product Product, visitors []Visitor) 
 	}
 	return output
 }
-
-/*
-func CreateNeuralNetworkProduct(persons []Person, product Product, visitors []Visitor) {
-	nn := gonn.DefaultNetwork(2,10,2, false)
-	input := CreateInputPerson(persons, product)
-	target := CreateTargetPerson(persons, product, visitors)
-	nn.Train(input, target, 10000)
-	gonn.DumpNN("gonnPerson", nn)
-}*/

@@ -94,10 +94,8 @@
         let url = "http://localhost:5001/recommendations/"+myVisitor;
         this.$http.get(url).then(result => {
             console.log(result);
-            //this.clearName()
             this.$refs.modal.hide()
             this.getItems()
-          //location.reload()
         })
       },
       getItems(ctx){

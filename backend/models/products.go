@@ -27,8 +27,6 @@ type Product struct {
   name string           `json:"product_name"`
   cathegory int64       `json:"product_cathegory"`
   price float64         `json:"product_price"`
-/*  stock int64
-  subcategory int64*/
 }
 
 

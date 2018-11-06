@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Products from '@/components/Products'
 import Users from '@/components/Users'
 import Recommendations from '@/components/Recommendations'
+import NeuralNetwork from '@/components/NeuralNetwork'
 
 Vue.use(Router)
 
@@ -27,6 +28,11 @@ const routes = [
       name: 'Recommendations',
       path: '/recommendations',
       component: Recommendations,
+    },
+    {
+      name: 'NeuralNetwork',
+      path: '/neuralnetwork',
+      component: NeuralNetwork,
     },
     ];
 

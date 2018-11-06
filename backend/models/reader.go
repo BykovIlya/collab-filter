@@ -22,8 +22,6 @@ func ReadingTransactionsFromFile(csvFileName string) []Events {
     log.Fatal(err)
   }
 
-  //defer csvFile.Close()
-
   fmt.Println("success open file!")
 	reader := csv.NewReader(bufio.NewReader(csvFile))
 	var events []Events
@@ -43,9 +41,7 @@ func ReadingTransactionsFromFile(csvFileName string) []Events {
       event.Transactionid = line[4]
 
       events = append(events, event)
-      /*insert to bd*/
-      //InsertOneEventToDB(event)
-    }
+    	}
 	}
 
 	return events
@@ -84,9 +80,7 @@ func MakeMatrixOfSales (visitors [] Visitor, removeDublicatesOfVisitors [] strin
 	 */
 	for i := 0; i < len(removeDublicatesOfVisitors); i++ {
 		for j := 0; j < len(visitors[i].Items); j++ {
-			//if visitors[i].items[j].itemid_count > 0 {
 			matrixOfSales[i][getIndItem(removeDublicatesOfItems,visitors[i].Items[j].Itemid_string)] = visitors[i].Items[j].Itemid_count;
-			//}
 		}
 	}
 	return matrixOfSales
@@ -154,26 +148,6 @@ func AddItemsToVisitor (visitor [] Visitor, events []Events){
 	}
 }
 
-/*
-func findVisitorInEvents(events []*Events, finder string) int {
-	for i := 0; i < len(events); i++ {
-		if events[i].visitorid == finder {
-			return i
-		}
-	}
-	return -1
-}
-
-func findItemsInEvents (events []*Events, finder string) int {
-	for i := 0; i < len(events); i++ {
-		if events[i].itemid == finder {
-			return i
-		}
-	}
-	return -1
-}
-*/
-
 /**
 	remove dublicates from visitors and itmes for make uniq arrays
  */
@@ -215,14 +189,6 @@ func toArray (matrix [][] float64, n int, m int, array [] float64) []float64 {
 	return array
 }
 
-/*
-func initCountToResult (item []Items) {
-	for i := 0; i < len(item); i++ {
-		item[i].itemid_count = 1
-	}
-}
-*/
-
 /**
 	find count of each items in array of items for each visitor
  */
@@ -244,56 +210,6 @@ func findCount (item []Items) [] Items{
 }
 
 /*
-func removeDuplicatesInItems(item []Items) []Items {
-	unique := 1
-	for i := 1; i < len(item); i++{
-		if item[i] != item[i - 1] {
-			unique++;
-		}
-	}
-	result := make([]Items, unique)
-	initCountToResult(result)
-	k := 0;
-	if len(result) > 0 {
-		result[k].itemid_string = item[0].itemid_string
-		k++
-	}
-	for i := 1; i < len(item); i++ {
-		if item[i].itemid_string != item[i - 1].itemid_string {
-			result[k].itemid_string = item[i].itemid_string;
-			result[k].itemid_count++
-			k++
-		}
-	}
-	return result;
-}
-*/
-/**
-find element from array
- */
-/*func find(buf []*Events, events []*Events, visitor []*Visitor) {
-	for i := 1; i < len(buf); i++ {
-		if buf[i].visitorid == buf[0].visitorid {
-			resultInd := findInEvents(events, buf[i].visitorid)
-			var itemsBuf []*Items
-			itemsBuf = append(itemsBuf,&Items{
-				itemid_string: buf[i].itemid,
-				itemid_int: resultInd,
-			})
-			visitor = append(visitor, &Visitor{
-				buf[i].visitorid,
-				resultInd,
-				itemsBuf,
-			})
-			remove(buf, buf[i])
-		}
-	}
-	remove(buf,buf[0])
-}
-*/
-
-
-/*
 	remove unnecessary elements from score array
  */
 func optimizeScores(scores [] float64, good [] float64) []float64{
@@ -306,13 +222,10 @@ func optimizeScores(scores [] float64, good [] float64) []float64{
 }
 
 func FindProductInPerson (id int, id_product string, visitors []Visitor) bool {
-/*	for i := 0; i < len(visitors); i++ { */
-			for j := 0; j < len(visitors[id].Items) ; j++ {
-				if (id_product == visitors[id].Items[j].Itemid_string) {
-					return true
-				}
-			}
-		//}
-	/*}*/
+	for j := 0; j < len(visitors[id].Items) ; j++ {
+		if (id_product == visitors[id].Items[j].Itemid_string) {
+			return true
+		}
+	}
 	return false
 }
