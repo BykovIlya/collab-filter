@@ -174,6 +174,8 @@
         },error =>{
           console.log("ERROR",error);
         });
+          //this.$refs.modal.hide()
+          //this.getItems()
       },
 
       getItems(ctx){

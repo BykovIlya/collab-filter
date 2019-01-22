@@ -33,7 +33,7 @@ const routes = [
       name: 'NeuralNetwork',
       path: '/neuralnetwork',
       component: NeuralNetwork,
-    },
+    }
     ];
 
 const router = new Router({routes,mode:'history'});
