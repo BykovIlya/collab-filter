@@ -10,6 +10,7 @@
             <b-col sm="7">
               <div class ="float-right">
                 <b-btn  variant="info" @click="showModalImport">загрузить файл.csv</b-btn>
+                <b-btn variant="success">Скачать шаблон</b-btn>
               </div>
             </b-col>
           </b-row>
@@ -109,12 +110,12 @@
           if (result.status === 200 || result.status === 304 ){
             if(result.body.length > 0) {
               this.items = result.body;
-              this.isBusy = false
+              this.isBusy = false;
               this.totalRows = this.items.length;
               return result.body
             }
           }
-          this.isBusy = false
+          this.isBusy = false;
           return []
         },error =>{
           this.isBusy = false;
@@ -133,7 +134,7 @@
         });
       },
       post: function (url, data, callback) {
-        console.log(data)
+        console.log(data);
         return this.$http.post(url,data,null).then(result => {
           callback(result);
         },error =>{

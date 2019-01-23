@@ -8,7 +8,7 @@
           <b-nav-item :to = "{ name: 'Users'}">Покупатели</b-nav-item>
           <b-nav-item :to = "{ name: 'Products'}">Продукты</b-nav-item>
           <b-nav-item :to = "{ name: 'Recommendations'}">Персональные рекомендации</b-nav-item>
-          <b-nav-item :to = "{name: 'NeuralNetwork'}">Рекоммендация новому пользователю</b-nav-item>
+          <b-nav-item :to = "{name: 'NeuralNetwork'}">Рекомендация новому пользователю</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
