@@ -1,27 +1,27 @@
 package models
 
 import (
-  "database/sql"
-  "log"
-  _ "github.com/lib/pq"
-  "fmt"
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
+	"log"
 )
 
 var DB *sql.DB
 
-func InitDB() bool{
-  connection := "host=localhost port=5432 user=postgres password=postgres dbname=ColabFilter sslmode=disable"
-  db, err := sql.Open("postgres", connection)
-  if err != nil {
-    log.Fatal(err)
-    return false
-  }
-  DB = db
-  return true
+func InitDB() bool {
+	connection := "host=localhost port=5432 user=postgres password=postgres dbname=ColabFilter sslmode=disable"
+	db, err := sql.Open("postgres", connection)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	DB = db
+	return true
 }
 
 func CreateDB(db *sql.DB) {
-  sql := `
+	sql := `
   CREATE TABLE IF NOT EXISTS events(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     timestamp VARCHAR(255) NOT NULL,
@@ -64,27 +64,26 @@ func CreateDB(db *sql.DB) {
     nnn float
   );
   `
-  _, err := db.Exec(sql)
-  if err != nil {
-    panic(err)
-  }
+	_, err := db.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
 }
 
-func ClearDB( db *sql.DB, name string) bool {
-  stmt, err := db.Prepare("delete from " + name)
-  if (err != nil) {
-    panic(err)
-  }
-  defer stmt.Close()
-  res, err := stmt.Exec()
-  if (err != nil) {
-    panic(err)
-  }
-  affect, err := res.RowsAffected()
-  if (err != nil) {
-    panic(err)
-  }
-  fmt.Println(affect," rows deleted")
-  return true
+func ClearDB(db *sql.DB, name string) bool {
+	stmt, err := db.Prepare("delete from " + name)
+	if err != nil {
+		panic(err)
+	}
+	defer stmt.Close()
+	res, err := stmt.Exec()
+	if err != nil {
+		panic(err)
+	}
+	affect, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(affect, " rows deleted")
+	return true
 }
-

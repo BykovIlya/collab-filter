@@ -1,18 +1,18 @@
 package main
 
 import (
-	"path/filepath"
+	"./models"
+	"./routes"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"log"
 	"os"
-  "fmt"
-  "github.com/gin-gonic/gin"
-  "ColabFilter/colab-filter/backend/routes"
-  "log"
-  "ColabFilter/colab-filter/backend/models"
+	"path/filepath"
 )
 
 func main() {
 	if models.InitDB() {
-		fmt.Println ("db init")
+		fmt.Println("db init")
 
 		models.CreateDB(models.DB)
 
@@ -24,10 +24,10 @@ func main() {
 
 	CreateDirsForFiles()
 	csvFileName := "api/upload/" + "File.csv"
-	if _,err := os.Stat(csvFileName); err != nil {
-	if os.IsNotExist(err) {
-	  	fmt.Println("file does not exist\n")
-	}
+	if _, err := os.Stat(csvFileName); err != nil {
+		if os.IsNotExist(err) {
+			fmt.Println("file does not exist\n")
+		}
 	} else {
 		routes.Algorithm(csvFileName)
 	}
@@ -36,7 +36,7 @@ func main() {
 	router.Use(CORSMiddleware())
 	router.Static("/api/c/tmp", "./api/c/tmp")
 	router.POST("/import", routes.ImportEvents)
-	router.GET("/events",routes.GetEvents)
+	router.GET("/events", routes.GetEvents)
 	router.GET("/users", routes.GetUsers)
 	router.GET("/products", routes.GetProducts)
 	router.GET("/recommendations", routes.GetRecommends)
@@ -54,19 +54,19 @@ func CreateDirsForFiles() {
 	os.MkdirAll(upload, os.ModePerm)
 }
 func CORSMiddleware() gin.HandlerFunc {
-  return func(c *gin.Context) {
-    c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-    c.Writer.Header().Set("Access-Control-Max-Age", "86400")
-    c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
-    c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length,X-Requested-With, Accept-Encoding, X-CSRF-Token, Authorization")
-    c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
-    c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length,X-Requested-With, Accept-Encoding, X-CSRF-Token, Authorization")
+		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
-    if c.Request.Method == "OPTIONS" {
-      fmt.Println("OPTIONS")
-      c.AbortWithStatus(200)
-    } else {
-      c.Next()
-    }
-  }
+		if c.Request.Method == "OPTIONS" {
+			fmt.Println("OPTIONS")
+			c.AbortWithStatus(200)
+		} else {
+			c.Next()
+		}
+	}
 }
