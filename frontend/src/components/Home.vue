@@ -151,7 +151,7 @@
         });
       },
       getTemplate() {
-        let url = this.$http.options.root + "tmp/eventsTemplate.csv"; /*<-- then fix on .xlsx*/
+        let url = this.$http.options.root + "tmp/eventsTemplate.xlsx"; /*<-- then fix on .xlsx*/
         window.open(url,'_black');
       },
       importProducts(){
