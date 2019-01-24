@@ -25,9 +25,9 @@ func CreateDB(db *sql.DB) {
   CREATE TABLE IF NOT EXISTS events(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     timestamp VARCHAR(255) NOT NULL,
-	  visitorid VARCHAR(255) NOT NULL REFERENCES persons (id),
+	  visitorid VARCHAR(255) NOT NULL,
 		event VARCHAR(255) NOT NULL,
-	  itemid VARCHAR(255) NOT NULL REFERENCES products(id),
+	  itemid VARCHAR(255) NOT NULL,
 		transactionid VARCHAR(255)
   );
   CREATE TABLE IF NOT EXISTS persons(
@@ -45,13 +45,13 @@ func CreateDB(db *sql.DB) {
     price real
   );
   CREATE TABLE IF NOT EXISTS recommends(
-    user_id VARCHAR(255) REFERENCES persons(id),
+    user_id VARCHAR(255),
     recommend float,
     score float
   );
   CREATE TABLE IF NOT EXISTS visitors(
-    visitor_id VARCHAR(255) REFERENCES persons(id),
-    item_id VARCHAR(255) REFERENCES products(id)
+    visitor_id VARCHAR(255),
+    item_id VARCHAR(255)
   );
   CREATE TABLE IF NOT EXISTS inputnn(
     gender float,

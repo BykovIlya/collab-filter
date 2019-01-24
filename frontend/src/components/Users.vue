@@ -7,6 +7,12 @@
             <b-col sm="5">
               <h4 class="card-title">Информация о покупателях</h4>
             </b-col>
+            <b-col sm="7">
+              <div class ="float-right">
+                <b-btn  variant="info" @click="showModalImport">Загрузить файл</b-btn>
+                <b-btn variant="success" @click="getTemplate">Скачать шаблон</b-btn>
+              </div>
+            </b-col>
           </b-row>
         </template>
         <b-row>
@@ -84,6 +90,15 @@
         </b-row>
       </b-card>
     </b-container>
+    <b-modal id="modal-import"
+             ref="modalImport"
+             title="import"
+             @ok="importPersons"
+             ok-title = "upload"
+             cancel-title = "cancel"
+             centered>
+      <b-form-file v-model="filePersons" class="mt-1"></b-form-file>
+    </b-modal>
   </div>
 </template>
 
@@ -92,7 +107,7 @@
     name: 'Users',
     data () {
       return {
-        formUrl: 'http://localhost:5001',
+        formUrl: "http://localhost:5001",
         fields: [
           {
             label: 'Покупатель',
@@ -140,6 +155,7 @@
         perPage_2:15,
         fileProducts:null,
         items:[],
+        filePersons: null,
         recommendations: [],
         isShowingDetail:false,
         filter: null,
@@ -156,13 +172,13 @@
         }
 
         let myVisitor = new String(row.item.visitorid_string)
-        let url = "http://localhost:5001/users/"+myVisitor;
+        let url = this.formUrl + "/users/" + myVisitor;
         this.$http.get(url).then(result => {
           console.log(result);
           if (result.status === 200 || result.status === 304 ){
             if(result.body.length > 0) {
               this.recommendations = result.body;
-              this.totalRows_2 = this.recommendations.length
+              this.totalRows_2 = this.recommendations.length;
               row.toggleDetails();
               return result.body
             }
@@ -179,7 +195,7 @@
       },
 
       getItems(ctx){
-        let url = "http://localhost:5001/users";
+        let url = this.formUrl + "/users";
         this.isBusy = true;
         return this.$http.get(url).then(result => {
           console.log(result);
@@ -207,16 +223,14 @@
           if (error.status === 422){
             callback(error.body);
           }
-          return
         });
       },
       post: function (url, data, callback) {
-        console.log(data)
+        console.log(data);
         return this.$http.post(url,data,null).then(result => {
           callback(result);
         },error =>{
           callback(error);
-          return
         });
       },
       put: function (url, data, callback) {
@@ -224,8 +238,27 @@
           callback(result);
         },error =>{
           callback(error);
-          return
         });
+      },
+      getTemplate() {
+        let url = this.$http.options.root + "tmp/personsTemplate.xlsx"; /*<-- then fix on .xlsx*/
+        window.open(url,'_black');
+      },
+      importPersons(){
+        let formData = new FormData();
+        formData.append('file', this.filePersons);
+        let url = this.formUrl+"/importPersons";
+        this.$http.post(url, formData, null).then(result => {
+          console.log(result);
+          if (result.status === 200) {
+            this.$refs.table.refresh();
+          }
+        },error =>{
+          console.log(error);
+        });
+      },
+      showModalImport () {
+        this.$refs.modalImport.show()
       },
 
     },

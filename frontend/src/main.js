@@ -14,10 +14,10 @@ Vue.use(VueResorce);
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false;
 
-const API = 'http://localhost:5001/';
-const API_URL = API + 'api/c/';
+const API = 'http://localhost:5001';
+const API_URL = API + '/api/c/';
 Vue.use(API);
-Vue.use(API_URL);
+//Vue.use(API_URL);
 
 Vue.http.options.root = API_URL;
 

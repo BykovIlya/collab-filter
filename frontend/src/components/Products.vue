@@ -7,6 +7,12 @@
             <b-col sm="5">
               <h4 class="card-title">Таблица продуктов</h4>
             </b-col>
+            <b-col sm="7">
+              <div class ="float-right">
+                <b-btn  variant="info" @click="showModalImport">Загрузить файл</b-btn>
+                <b-btn variant="success" @click="getTemplate">Скачать шаблон</b-btn>
+              </div>
+            </b-col>
           </b-row>
         </template>
         <b-row>
@@ -41,6 +47,15 @@
         </b-row>
       </b-card>
     </b-container>
+    <b-modal id="modal-import"
+             ref="modalImport"
+             title="import"
+             @ok="importProducts"
+             ok-title = "upload"
+             cancel-title = "cancel"
+             centered>
+      <b-form-file v-model="fileProducts" class="mt-1"></b-form-file>
+    </b-modal>
   </div>
 </template>
 
@@ -76,20 +91,20 @@
   },
     methods:{
       getItems(ctx){
-        let url = "http://localhost:5001/products";
+        let url = this.formUrl + "/products";
         this.isBusy = true;
         return this.$http.get(url).then(result => {
           console.log(result);
 
           if (result.status === 200 || result.status === 304 ){
             if(result.body.length > 0) {
-              this.isBusy = false
+              this.isBusy = false;
               this.items = result.body;
               this.totalRows = this.items.length;
               return result.body
             }
           }
-          this.isBusy = false
+          this.isBusy = false;
           return []
         },error =>{
           this.isBusy = false;
@@ -104,16 +119,14 @@
           if (error.status === 422){
             callback(error.body);
           }
-          return
         });
       },
       post: function (url, data, callback) {
-        console.log(data)
+        console.log(data);
         return this.$http.post(url,data,null).then(result => {
           callback(result);
         },error =>{
           callback(error);
-          return
         });
       },
       put: function (url, data, callback) {
@@ -121,10 +134,28 @@
           callback(result);
         },error =>{
           callback(error);
-          return
         });
       },
-
+      getTemplate() {
+        let url = this.$http.options.root + "tmp/productsTemplate.xlsx";
+        window.open(url,'_black');
+      },
+      importProducts(){
+        let formData = new FormData();
+        formData.append('file', this.fileProducts);
+        let url = this.formUrl+"/importProducts";
+        this.$http.post(url, formData, null).then(result => {
+          console.log(result);
+          if (result.status === 200) {
+            this.$refs.table.refresh();
+          }
+        },error =>{
+          console.log(error);
+        });
+      },
+      showModalImport () {
+        this.$refs.modalImport.show()
+      },
     },
   }
 

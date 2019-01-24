@@ -85,11 +85,11 @@ func Algorithm(csvFileName string) {
 	for i := 0; i < len(removeDublicatesOfItems); i++ {
 		products = append(products, strconv.Itoa(i))
 	}
-	/*  need := false
+		/*need := true
 	    models.CreateNeuralNetworkPerson(models.GetPersonsFromDB(), models.GetProductsFromDB(), visitors, need)
 	    nn := gonn.LoadNN("gonnPerson")
 	    out := nn.Forward([]float64{0.0, 55.0, 12.0, 19.0})
-	    fmt.Println("nn result:", models.GetResult(out))   */ //  <---- neuralNetwork
+	    fmt.Println("nn result:", models.GetResult(out))  */  //  <---- neuralNetwork
 	models.ImportVisitorsToDB(visitors)
 }
 

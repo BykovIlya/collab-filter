@@ -9,7 +9,7 @@
             </b-col>
             <b-col sm="7">
               <div class ="float-right">
-                <b-btn  variant="info" @click="showModalImport">загрузить файл.csv</b-btn>
+                <b-btn  variant="info" @click="showModalImport">Загрузить файл</b-btn>
                 <b-btn variant="success" @click="getTemplate">Скачать шаблон</b-btn>
               </div>
             </b-col>
@@ -52,11 +52,11 @@
     <b-modal id="modal-import"
              ref="modalImport"
              title="import"
-             @ok="importProducts"
+             @ok="importEvents"
              ok-title = "upload"
              cancel-title = "cancel"
              centered>
-      <b-form-file v-model="fileProducts" class="mt-1"></b-form-file>
+      <b-form-file v-model="fileEvents" class="mt-1"></b-form-file>
     </b-modal>
   </div>
 </template>
@@ -66,7 +66,7 @@
     name: 'Home',
     data () {
       return {
-        formUrl: 'http://localhost:5001',
+        formUrl: "http://localhost:5001",
         fields: [
           {
             key: 'timestamp',
@@ -92,7 +92,7 @@
         totalRows:1,
         currentPage:1,
         perPage:15,
-        fileProducts:null,
+        fileEvents:null,
         items:[],
         filter: null,
       }
@@ -102,7 +102,7 @@
     },
     methods:{
       getItems(ctx){
-        let url = "http://localhost:5001/events";
+        let url = this.formUrl + "/events";
         this.isBusy = true;
         return this.$http.get(url).then(result => {
           console.log(result);
@@ -154,10 +154,10 @@
         let url = this.$http.options.root + "tmp/eventsTemplate.xlsx"; /*<-- then fix on .xlsx*/
         window.open(url,'_black');
       },
-      importProducts(){
+      importEvents(){
         let formData = new FormData();
-        formData.append('file', this.fileProducts);
-        let url = this.formUrl+"/import";
+        formData.append('file', this.fileEvents);
+        let url = this.formUrl+"/importEvents";
         this.$http.post(url, formData, null).then(result => {
           console.log(result);
           if (result.status === 200) {

@@ -79,6 +79,7 @@ func GetResult(output [] float64) int64{
 
 	for i, val := range output {
 		if (val > max) {
+			fmt.Println(val)
 			max = val
 			pos = i
 		}

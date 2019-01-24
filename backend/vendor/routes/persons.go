@@ -38,3 +38,7 @@ func GetPerson(c *gin.Context) {
 		c.JSON(200, recommendations)
 	}
 }
+
+func ImportPersons(c *gin.Context) {
+
+}

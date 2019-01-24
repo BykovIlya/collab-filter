@@ -25,6 +25,9 @@ func main() {
 
 	CreateDirsForFiles()
 	CreateExcelEventsTemplate()
+	CreateExcelPersonsTemplate()
+	CreateExcelProductsTemplate()
+
 	csvFileName := "api/upload/" + "File.csv"
 	if _, err := os.Stat(csvFileName); err != nil {
 		if os.IsNotExist(err) {
@@ -37,14 +40,15 @@ func main() {
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	router.Static("/api/c/tmp", "./api/c/tmp")
-	router.POST("/import", routes.ImportEvents)
+	router.POST("/importEvents", routes.ImportEvents)
+	router.POST("/importPersons", routes.ImportPersons)
+	router.POST("/importProducts", routes.ImportProducts)
 	router.GET("/events", routes.GetEvents)
 	router.GET("/users", routes.GetUsers)
 	router.GET("/products", routes.GetProducts)
 	router.GET("/recommendations", routes.GetRecommends)
 	router.GET("/recommendations/:id", routes.GetPerson)
 	router.GET("/users/:id", routes.GetPerson)
-	router.GET("/eventsTemplate",routes.GetEventsTemplate)
 	router.GET("/neuralnetwork/:age/:gender/:category/:price", routes.GetResult)
 	router.Run(":5001")
 }
@@ -99,6 +103,65 @@ func CreateExcelEventsTemplate() string {
 	cell.Value = "Номер транзакции"
 
 	savePath := "api/c/tmp/eventsTemplate.xlsx"
+	err = file.Save(savePath)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return savePath
+}
+
+
+
+func CreateExcelPersonsTemplate() string {
+	var file *xlsx.File
+	var sheet *xlsx.Sheet
+	var row *xlsx.Row
+	var cell *xlsx.Cell
+	var err error
+
+	file = xlsx.NewFile()
+	sheet, err = file.AddSheet("Sheet1")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	row = sheet.AddRow()
+	cell = row.AddCell()
+	cell.Value = "Идентификатор"
+	cell = row.AddCell()
+	cell.Value = "Имя"
+	cell = row.AddCell()
+	cell.Value = "Фамилия"
+	cell = row.AddCell()
+	cell.Value = "Возраст"
+	cell = row.AddCell()
+	cell.Value = "Пол"
+	cell = row.AddCell()
+	cell.Value = "Доп. информация"
+	savePath := "api/c/tmp/personsTemplate.xlsx"
+	err = file.Save(savePath)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return savePath
+}
+
+func CreateExcelProductsTemplate() string {
+	var file *xlsx.File
+	var sheet *xlsx.Sheet
+	var row *xlsx.Row
+	var cell *xlsx.Cell
+	var err error
+
+	file = xlsx.NewFile()
+	sheet, err = file.AddSheet("Sheet1")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	row = sheet.AddRow()
+	cell = row.AddCell()
+	cell.Value = "Идентификатор"
+
+	savePath := "api/c/tmp/productsTemplate.xlsx"
 	err = file.Save(savePath)
 	if err != nil {
 		fmt.Println(err.Error())
