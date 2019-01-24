@@ -1,13 +1,14 @@
 package main
 
 import (
-	"./models"
-	"./routes"
+	"models"
+	"routes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
 	"path/filepath"
+	"github.com/tealeg/xlsx"
 )
 
 func main() {
@@ -23,6 +24,7 @@ func main() {
 	}
 
 	CreateDirsForFiles()
+	CreateExcelEventsTemplate()
 	csvFileName := "api/upload/" + "File.csv"
 	if _, err := os.Stat(csvFileName); err != nil {
 		if os.IsNotExist(err) {
@@ -42,6 +44,7 @@ func main() {
 	router.GET("/recommendations", routes.GetRecommends)
 	router.GET("/recommendations/:id", routes.GetPerson)
 	router.GET("/users/:id", routes.GetPerson)
+	//router.GET("/eventsTemplate",routes.)
 	router.GET("/neuralnetwork/:age/:gender/:category/:price", routes.GetResult)
 	router.Run(":5001")
 }
@@ -69,4 +72,36 @@ func CORSMiddleware() gin.HandlerFunc {
 			c.Next()
 		}
 	}
+}
+
+func CreateExcelEventsTemplate() string {
+	var file *xlsx.File
+	var sheet *xlsx.Sheet
+	var row *xlsx.Row
+	var cell *xlsx.Cell
+	var err error
+
+	file = xlsx.NewFile()
+	sheet, err = file.AddSheet("Sheet1")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	row = sheet.AddRow()
+	cell = row.AddCell()
+	cell.Value = "Время покупки"
+	cell = row.AddCell()
+	cell.Value = "Идентификатор покупателя"
+	cell = row.AddCell()
+	cell.Value = "Тип посещения(view,addtocard,transaction)"
+	cell = row.AddCell()
+	cell.Value = "Идентификатор продукта"
+	cell = row.AddCell()
+	cell.Value = "Номер транзакции"
+
+	savePath := "api/c/tmp/eventsTemplate.xlsx"
+	err = file.Save(savePath)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return savePath
 }

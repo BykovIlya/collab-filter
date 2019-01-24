@@ -10,7 +10,7 @@
             <b-col sm="7">
               <div class ="float-right">
                 <b-btn  variant="info" @click="showModalImport">загрузить файл.csv</b-btn>
-                <b-btn variant="success">Скачать шаблон</b-btn>
+                <b-btn variant="success" @click="getTemplate">Скачать шаблон</b-btn>
               </div>
             </b-col>
           </b-row>
@@ -149,6 +149,10 @@
           callback(error);
           return
         });
+      },
+      getTemplate() {
+        let url = this.$http.options.root + "tmp/eventsTemplate.csv"; /*<-- then fix on .xlsx*/
+        window.open(url,'_black');
       },
       importProducts(){
         let formData = new FormData();
