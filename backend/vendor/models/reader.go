@@ -17,12 +17,12 @@ import (
  */
 func ReadingTransactionsFromFile(csvFileName string) []Events {
 	csvFile, err := os.Open(csvFileName)
-  if err != nil {
-    fmt.Println("Error with reading from file:", err)
-    log.Fatal(err)
-  }
+  	if err != nil {
+    	fmt.Println("Error with reading from events_file:", err)
+    	log.Fatal(err)
+ 	 }
 
-  fmt.Println("success open file!")
+  	fmt.Println("success open events_file!")
 	reader := csv.NewReader(bufio.NewReader(csvFile))
 	var events []Events
 	for {
@@ -33,15 +33,15 @@ func ReadingTransactionsFromFile(csvFileName string) []Events {
 			log.Fatal(error)
 		}
 		//if line[2] == "transaction" {
-      var event= Events{}
-      event.Timestamp = line[4]
-      event.Visitorid = line[0]
-      event.Event_ = line[1]
-      event.Itemid = line[2]
-      event.Transactionid = line[5]
+	  var event= Events{}
+	  event.Timestamp = line[4]
+	  event.Visitorid = line[0]
+	  event.Event_ = line[1]
+	  event.Itemid = line[2]
+	  event.Transactionid = line[5]
 
-      events = append(events, event)
-    	//}
+	  events = append(events, event)
+		//}
 
 		/*if line[2] == "transaction" {
 		var event= Events{}
@@ -58,6 +58,17 @@ func ReadingTransactionsFromFile(csvFileName string) []Events {
 	return events
 }
 
+func ReadingProductsFromFile(csvFileName string) []Product {
+	csvFile, err := os.Open(csvFileName)
+	if err != nil {
+		fmt.Println("Error with reading from events_file:", err)
+		log.Fatal(err)
+	}
+
+	fmt.Println("success open events_file!")
+	reader := csv.NewReader(bufio.NewReader(csvFile))
+	var products []Product
+}
 func MakeUniqArrayOfVisitors(events []Events) []string {
 	bufOfVisitors := make ([] string, len(events))
 	for i := 0; i < len(events); i++ {
